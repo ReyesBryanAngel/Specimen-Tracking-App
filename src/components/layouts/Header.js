@@ -11,10 +11,12 @@ import {
   EuiText,
 } from "@elastic/eui";
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -54,32 +56,88 @@ const Header = () => {
     {
       name: "Home",
       id: "home",
-      icon: <EuiIcon type="home" size="m" />,
+      icon: (
+        <EuiIcon
+          style={{
+            marginRight: "8px",
+          }}
+          type="home"
+          size="m"
+        />
+      ),
+      onClick: () => {
+        navigate("/");
+        setIsSidebarOpen(false);
+      },
     },
     {
       name: "Dashboard",
       id: "dashboard",
-      icon: <EuiIcon type="grid" size="m" />,
+      icon: (
+        <EuiIcon
+          style={{
+            marginRight: "8px",
+          }}
+          type="grid"
+          size="m"
+        />
+      ),
+      onClick: () => {
+        navigate("/dashboard");
+        setIsSidebarOpen(false);
+      },
     },
     {
       name: "Patients",
       id: "patients",
-      icon: <EuiIcon type="users" size="m" />,
+      icon: (
+        <EuiIcon
+          style={{
+            marginRight: "8px",
+          }}
+          type="users"
+          size="m"
+        />
+      ),
     },
     {
       name: "Results",
       id: "results",
-      icon: <EuiIcon type="userAvatar" size="m" />,
+      icon: (
+        <EuiIcon
+          style={{
+            marginRight: "8px",
+          }}
+          type="userAvatar"
+          size="m"
+        />
+      ),
     },
     {
       name: "Specimen Form",
       id: "specimenForm",
-      icon: <EuiIcon type="documentEdit" size="m" />,
+      icon: (
+        <EuiIcon
+          style={{
+            marginRight: "8px",
+          }}
+          type="documentEdit"
+          size="m"
+        />
+      ),
     },
     {
       name: "Courier",
       id: "courier",
-      icon: <EuiIcon type="push" size="m" />,
+      icon: (
+        <EuiIcon
+          style={{
+            marginRight: "8px",
+          }}
+          type="push"
+          size="m"
+        />
+      ),
     },
   ];
 
@@ -90,7 +148,13 @@ const Header = () => {
         className={`sidebar ${isSidebarOpen ? "open" : ""}`}
         ref={sidebarRef}
       >
-        <EuiSideNav items={sideNav} className="custom-side-nav" />
+        <EuiSideNav
+          style={{
+            border: "none",
+          }}
+          items={sideNav}
+          className="custom-side-nav"
+        />
       </div>
 
       {/* Main header */}
@@ -107,7 +171,7 @@ const Header = () => {
               <EuiIcon type="menu" size="l" />
             </EuiHeaderLink>
 
-            <EuiHeaderLogo href="#">NSF</EuiHeaderLogo>
+            <EuiHeaderLogo href="/">NSF</EuiHeaderLogo>
           </EuiHeaderSectionItem>
         </EuiHeaderSection>
 
