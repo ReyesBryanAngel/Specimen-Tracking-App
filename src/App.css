@@ -31,19 +31,34 @@
   }
 }
 
-.body-content {
-  height: 100%;
-  background-color: var(--secondary-main);
-  padding: 42px 19px 45px 19px;
+body {
+  margin: 0;
+  padding: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  background-color: var(--secondary-main);
+  overscroll-behavior: none;
+}
+
+#root {
+  height: 100%;
+}
+
+.content {
+  height: 100%;
+}
+
+.body-content {
+  padding: 42px 19px 45px 19px;
+  height: 100%;
 }
 
 .main-content {
+  flex: 1;
   background-color: var(--default);
   border-radius: 4px;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 200px);
 }
 
 .App-header {
@@ -92,11 +107,57 @@
   margin-bottom: 8px; /* Adjust the spacing as needed */
 }
 
+.euiSideNavItem {
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.euiSideNavItemButton {
+  border: none;
+  padding: 0;
+}
+
 .title {
   font-size: var(--title-text);
 }
 
+.home-container {
+  overflow-y: scroll;
+  height: 656px;
+}
+
 .info-container {
-  padding: 8px 12px 0px 11px;
+  padding: 8px 11px 0px 11px;
   margin-bottom: 16px;
+}
+
+.dashboard-title-container {
+  margin: 21px 0px 19px 18px;
+}
+
+.euiCard__title {
+  margin: 10px 0; /* Adjust the top and bottom margins as needed */
+}
+
+.euiCard__description {
+  margin-top: 0px;
+}
+
+.euiCard__footer {
+  margin-top: 0px; /* Adjust the top margin as needed */
+  margin-bottom: 10px; /* Adjust the bottom margin as needed */
+}
+
+.dashboard-container {
+  padding: 8px 12px 20px 11px;
+  height: 100%;
+}
+
+.cards-container {
+  width: 100%;
+  display: flex;
+}
+
+.custom-card {
+  width: 160px;
 }
