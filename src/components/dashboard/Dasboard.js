@@ -1,7 +1,6 @@
 import {
   EuiFlexGrid,
   EuiFlexItem,
-  EuiCard,
   EuiButton,
   EuiFlexGroup,
   EuiPanel,
