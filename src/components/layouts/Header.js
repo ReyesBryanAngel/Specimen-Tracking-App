@@ -125,6 +125,10 @@ const Header = () => {
           size="m"
         />
       ),
+      onClick: () => {
+        navigate("/add-specimen");
+        setIsSidebarOpen(false);
+      },
     },
     {
       name: "Courier",
@@ -171,7 +175,15 @@ const Header = () => {
               <EuiIcon type="menu" size="l" />
             </EuiHeaderLink>
 
-            <EuiHeaderLogo href="/">NSF</EuiHeaderLogo>
+            <a
+              href="/"
+              style={{
+                textDecoration: "none",
+                fontSize: "24px",
+              }}
+            >
+              NSF
+            </a>
           </EuiHeaderSectionItem>
         </EuiHeaderSection>
 
