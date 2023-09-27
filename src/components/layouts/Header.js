@@ -1,16 +1,15 @@
 import {
+  EuiAvatar,
   EuiHeader,
+  EuiHeaderLink,
+  EuiHeaderLinks,
   EuiHeaderSection,
   EuiHeaderSectionItem,
-  EuiHeaderLogo,
-  EuiHeaderLinks,
-  EuiHeaderLink,
-  EuiAvatar,
   EuiIcon,
   EuiSideNav,
   EuiText,
 } from "@elastic/eui";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -44,7 +43,7 @@ const Header = () => {
     };
   }, [isSidebarOpen]);
 
-  const sideNav = [
+  const sideNavItems = [
     {
       name: (
         <EuiText size="xs">
@@ -156,13 +155,20 @@ const Header = () => {
           style={{
             border: "none",
           }}
-          items={sideNav}
+          items={sideNavItems}
           className="custom-side-nav"
         />
       </div>
 
       {/* Main header */}
-      <EuiHeader>
+      {/* make header fixed but also take the space of the container */}
+      <EuiHeader
+        style={{
+          position: "fixed",
+          width: "100%",
+          zIndex: "100",
+        }}
+      >
         <EuiHeaderSection grow={false}>
           <EuiHeaderSectionItem border="right">
             {/* Hamburger Icon */}
@@ -180,6 +186,7 @@ const Header = () => {
               style={{
                 textDecoration: "none",
                 fontSize: "24px",
+                color: "#000000",
               }}
             >
               NSF

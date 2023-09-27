@@ -73,7 +73,7 @@ const ScanBarcode = () => {
                 border: "0px",
               }}
               onClick={() => {
-                navigate("/specimen-form");
+                navigate("/add-specimen/specimen-form");
               }}
             >
               <p
