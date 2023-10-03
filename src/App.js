@@ -8,6 +8,8 @@ import Home from "./components/home/Home";
 import Header from "./components/layouts/Header";
 import ScanBarcode from "./components/specimen-form/ScanBarcode";
 import SpecimenForm from "./components/specimen-form/SpecimenForm";
+import SpecimenReview from "./components/specimen-form/SpecimenReview";
+import SpecimenSubmit from "./components/specimen-form/SpecimenSubmit";
 
 function App() {
   const location = useLocation();
@@ -24,6 +26,8 @@ function App() {
           <Route path="/add-specimen/*">
             <Route index element={<ScanBarcode />} />
             <Route path="specimen-form" element={<SpecimenForm />} />
+            <Route path="specimen-review" element={<SpecimenReview />} />
+            <Route path="specimen-submit" element={<SpecimenSubmit />} />
           </Route>
         </Routes>
       </div>
