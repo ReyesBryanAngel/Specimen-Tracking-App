@@ -735,7 +735,7 @@ const SpecimenForm = () => {
               }}
               fullWidth
               onClick={() => {
-                console.log("Review");
+                navigate("/add-specimen/specimen-review")
               }}
             >
               <p
