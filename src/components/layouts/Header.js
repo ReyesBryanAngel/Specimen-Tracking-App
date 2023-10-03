@@ -98,6 +98,10 @@ const Header = () => {
           size="m"
         />
       ),
+      onClick: () => {
+        navigate("/patients");
+        setIsSidebarOpen(false);
+      },
     },
     {
       name: "Results",
