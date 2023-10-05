@@ -111,6 +111,10 @@ const Header = () => {
           size="m"
         />
       ),
+      onClick: () => {
+        navigate("/results");
+        setIsSidebarOpen(false);
+      },
     },
     {
       name: "Specimen Form",
@@ -141,6 +145,10 @@ const Header = () => {
           size="m"
         />
       ),
+      onClick: () => {
+        navigate("courier");
+        setIsSidebarOpen(false);
+      },
     },
   ];
 
