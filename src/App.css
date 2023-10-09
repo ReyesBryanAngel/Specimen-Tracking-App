@@ -136,7 +136,6 @@ body {
 }
 
 .home-container {
-  overflow-y: scroll;
   height: 656px;
 }
 
@@ -266,4 +265,9 @@ body {
 
 
 
+.sorter-button {
+  text-decoration: none;
+  color: black;
+  font-size: 12;
+}
 

@@ -1,124 +1,47 @@
 const results = [
     {
-      name: "Angel Bryan Reyes1",
-      birthday: "July 05, 1999",
+      name: "Angel Bryan Reyes",
+      birthday: "July 05, 2014",
       sex: "M",
       result: "inadequate"
     },
     {
-      name: "Angel Bryan Reyes2",
-      birthday: "July 05, 1999",
+      name: "Princess Joyce Guerra",
+      birthday: "July 05, 2013",
+      sex: "F",
+      result: "negative"
+    },
+    {
+      name: "May Reyes",
+      birthday: "July 05, 2012",
+      sex: "F",
+      result: "positive"
+    },
+    {
+      name: "Angelo Reyes",
+      birthday: "July 05, 2011",
+      sex: "M",
+      result: "inadequate"
+    },
+    {
+      name: "Raven Cabrera",
+      birthday: "July 05, 2010",
       sex: "M",
       result: "negative"
     },
     {
-      name: "Angel Bryan Reyes3",
-      birthday: "July 05, 1999",
+      name: "Roger Federer",
+      birthday: "July 05, 2009",
       sex: "M",
       result: "positive"
     },
     {
-      name: "Angel Bryan Reyes4",
-      birthday: "July 05, 1999",
+      name: "Rafael Nadal",
+      birthday: "July 05, 2008",
       sex: "M",
       result: "inadequate"
     },
-    {
-      name: "Angel Bryan Reyes5",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "negative"
-    },
-    {
-      name: "Angel Bryan Reyes6",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "positive"
-    },
-    {
-      name: "Angel Bryan Reyes7",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "inadequate"
-    },
-    {
-      name: "Angel Bryan Reyes8",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "negative"
-    },
-    {
-      name: "Angel Bryan Reyes9",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "positive"
-    },
-    {
-      name: "Angel Bryan Reyes10",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "positive"
-    },
-    {
-      name: "Angel Bryan Reyes1",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "inadequate"
-    },
-    {
-      name: "Angel Bryan Reyes2",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "inadequate"
-    },
-    {
-      name: "Angel Bryan Reyes3",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "inadequate"
-    },
-    {
-      name: "Angel Bryan Reyes4",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "inadequate"
-    },
-    {
-      name: "Angel Bryan Reyes5",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "negative"
-    },
-    {
-      name: "Angel Bryan Reyes6",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "negative"
-    },
-    {
-      name: "Angel Bryan Reyes7",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "negative"
-    },
-    {
-      name: "Angel Bryan Reyes8",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "positive"
-    },
-    {
-      name: "Angel Bryan Reyes9",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "positive"
-    },
-    {
-      name: "Angel Bryan Reyes10",
-      birthday: "July 05, 1999",
-      sex: "M",
-      result: "positive"
-    },
+   
 ]
   
 export default results;
