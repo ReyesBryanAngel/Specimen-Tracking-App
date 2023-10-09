@@ -1,37 +1,37 @@
 const patients = [
   {
-    name: "Angel Bryan Reyes1",
+    name: "Angel Bryan Reyes",
+    birthday: "May 17, 2001",
+    sex: "M",
+    specimen_status: "Pending"
+  },
+  {
+    name: "Princess Joyce Guerra",
     birthday: "July 05, 1999",
     sex: "M",
     specimen_status: "Pending"
   },
   {
-    name: "Angel Bryan Reyes2",
-    birthday: "July 05, 1999",
+    name: "May Reyes",
+    birthday: "April 30, 1978",
     sex: "M",
-    specimen_status: "Pending"
+    specimen_status: "Sent"
   },
   {
-    name: "Angel Bryan Reyes3",
-    birthday: "July 05, 1999",
+    name: "Angelo Reyes",
+    birthday: "June 08, 1979",
     sex: "M",
-    specimen_status: "Pending"
+    specimen_status: "Sent"
   },
   {
-    name: "Angel Bryan Reyes4",
-    birthday: "July 05, 1999",
-    sex: "M",
-    specimen_status: "Pending"
-  },
-  {
-    name: "Angel Bryan Reyes5",
-    birthday: "July 05, 1999",
+    name: "Aulrich Reyes",
+    birthday: "November 16, 2014",
     sex: "M",
     specimen_status: "Pending"
   },
   {
     name: "Angel Bryan Reyes6",
-    birthday: "July 05, 1999",
+    birthday: "May 31, 1998",
     sex: "M",
     specimen_status: "Pending"
   },
@@ -43,7 +43,7 @@ const patients = [
   },
   {
     name: "Angel Bryan Reyes8",
-    birthday: "July 05, 1999",
+    birthday: "July 05, 2001",
     sex: "M",
     specimen_status: "Pending"
   },
