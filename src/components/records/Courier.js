@@ -10,9 +10,11 @@ import {
     EuiListGroup,
 } from "@elastic/eui";
 import courier from '../../config/courier';
+import { useNavigate } from "react-router-dom";
 
 
 const Courier = () => {
+    const navigate = useNavigate();
     const [unsent, setUnsent] = useState([]);
     const [resultSetter, setresultSetter] = useState([...courier]);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -172,8 +174,8 @@ const Courier = () => {
                         }}
                         
                         onClick={() => {
-                        // Handle button click
-                        }}
+                            navigate("/review-samples");
+                          }}
                     >
                         Send Samples
                     </EuiButton>
