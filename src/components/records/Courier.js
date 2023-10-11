@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     EuiFlexGroup,
     EuiFlexItem,
@@ -10,6 +10,15 @@ import courier from '../../config/courier';
 
 
 const Courier = () => {
+    const [unsent, setUnsent] = useState([]);
+    useEffect (() => {
+        const receivedStatuses = courier
+        .map((data) => data.status)
+        .filter((status) => status === 'received');
+
+        setUnsent([...receivedStatuses]);
+    }, [courier])
+
     return (
         <div className="main-content">
             <div className="specimen-form-container">
@@ -52,7 +61,7 @@ const Courier = () => {
                 <div
                     className="bottom-bar"
                 >
-                    <h4>You have {courier.length} unsent samples</h4>
+                    <h4>You have {unsent.length} unsent samples</h4>
                     <EuiButton
                         style={{
                         borderRadius: "2.813px",

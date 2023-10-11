@@ -1,4 +1,4 @@
-const results = [
+const courier = [
     {
         courier: "2G0-987654",
         date_of_pickup: "July 05, 1999",
@@ -121,4 +121,4 @@ const results = [
     },
     ]
   
-  export default results;
+  export default courier;
