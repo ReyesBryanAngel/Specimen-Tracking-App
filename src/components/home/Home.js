@@ -2,6 +2,7 @@ import React from "react";
 import Announcement from "./components/Announcement";
 import Articles from "./components/Articles";
 import Partners from "./components/Partners";
+import { AddSpecimenButton } from "../../components/add-specimen/AddSpecimenButton";
 
 const Home = () => {
   //return <div>Home</div>;
@@ -11,6 +12,7 @@ const Home = () => {
         <Announcement />
         <Articles />
         <Partners />
+        <AddSpecimenButton />
       </div>
     </div>
   );

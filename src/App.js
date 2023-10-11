@@ -19,7 +19,7 @@ function App() {
   return (
     <div className="content">
       <Header />
-      {!isSpecimenFormPage && <AddSpecimenButton />}
+      {/* {!isSpecimenFormPage && <AddSpecimenButton />} */}
       <div className={"body-content"}>
         <Routes>
           <Route path="/" element={<Home />} />

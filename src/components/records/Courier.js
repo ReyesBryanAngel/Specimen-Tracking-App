@@ -4,13 +4,60 @@ import {
     EuiFlexItem,
     EuiCard,
     EuiText,
-    EuiButton
+    EuiButton,
+    EuiPopover,
+    EuiButtonEmpty,
+    EuiListGroup,
 } from "@elastic/eui";
 import courier from '../../config/courier';
 
 
 const Courier = () => {
     const [unsent, setUnsent] = useState([]);
+    const [resultSetter, setresultSetter] = useState([...courier]);
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    const items = [
+        {
+            label: (
+                <span onClick={() => sortByBirthday()}>
+                    Date of Pickup
+                </span>
+                ),
+        }
+    ];
+
+    const closePopover = () => {
+        setIsPopoverOpen(false);
+    };
+
+    const togglePopover = () => {
+        setIsPopoverOpen(!isPopoverOpen);
+    };
+
+    const sortByBirthday = () => {
+        const sortedResults = [...courier].sort((a, b) => {
+            const dateA = new Date(a.date_of_pickup);
+            const dateB = new Date(b.date_of_pickup);
+            return dateA - dateB;
+        });
+        setresultSetter(sortedResults);
+        closePopover();
+    };
+
+    const sortBySent= () => {
+        const SentSorter = courier.filter((c) => c.status === "sent");
+
+        setresultSetter(SentSorter);
+        closePopover();
+    };
+
+    const sortByReceived = () => {
+        const receivedSorter = courier.filter((r) => r.status === "received");
+
+        setresultSetter(receivedSorter);
+        closePopover();
+    };
+
     useEffect (() => {
         const receivedStatuses = courier
         .map((data) => data.status)
@@ -19,23 +66,74 @@ const Courier = () => {
         setUnsent([...receivedStatuses]);
     }, [courier])
 
+
     return (
         <div className="main-content">
-            <div className="specimen-form-container">
+            <div className="home-container">
                 <EuiFlexGroup style={{ gap: "20px", marginBottom: "20px" }}>
-                    <h5
-                        style={{
-                        marginTop: "0",
-                        marginBottom: "0",
-                        fontSize: "20px"
-                        }}
-                    >
-                        Courier
-                    </h5>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginLeft: "20px", marginTop: "20px"}}>
+                        <div>
+                            <h5
+                                style={{
+                                marginTop: "0",
+                                marginBottom: "0",
+                                fontSize: "20px"
+                                }}
+                            >
+                            Courier
+                            </h5>
+                        </div>
+                        <div style={{ marginTop: "50px"}}>
+                            <div style={{ display: "flex"}}>
+                                <EuiButtonEmpty
+                                    size="s"
+                                    iconSide="right"
+                                    onClick={sortBySent}
+                                    style={{ textDecoration:"none", color:"black",  backgroundColor: "transparent"}}
+                                >
+                                    Sent
+                                </EuiButtonEmpty>
+                                <EuiButtonEmpty
+                                    size="s"                                  
+                                    iconSide="right"
+                                    onClick={sortByReceived}
+                                    style={{ textDecoration:"none", color:"black",  backgroundColor: "transparent"}}
+                                >
+                                    Received
+                                </EuiButtonEmpty>
+                                <EuiPopover
+                                    id="dropdownButtonExample"
+                                    ownFocus
+                                    button={
+                                        <EuiButtonEmpty
+                                            size="s"
+                                            iconType="arrowDown"
+                                            iconSide="right"
+                                            onClick={togglePopover}
+                                            style={{ textDecoration:"none", color:"black",  backgroundColor: "transparent"}}
+                                        >
+                                        Sort by
+                                        </EuiButtonEmpty>
+                                    }
+                                    isOpen={isPopoverOpen}
+                                    closePopover={closePopover}
+                                    panelPaddingSize="none"
+                                >
+                                <EuiListGroup
+                                    listItems={items}
+                                    maxWidth="none"
+                                    color="black"
+                                    gutterSize="s"
+                                    className="custom-eui-pagination"
+                                />
+                                </EuiPopover>
+                            </div>
+                        </div>
+                    </div>
                     <EuiFlexItem style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px"}}>
-                        {courier.map((couriers, index) => (
+                        {resultSetter.map((couriers, index) => (
                             <EuiCard
-                                style={{ width: '95%' }}
+                                style={{ width: '85%' }}
                                 key={index}
                                 textAlign="left"
                             >
@@ -61,7 +159,9 @@ const Courier = () => {
                 <div
                     className="bottom-bar"
                 >
-                    <h4>You have {unsent.length} unsent samples</h4>
+                    <div>
+                        <h4>You have {unsent.length} unsent samples</h4>
+                    </div>   
                     <EuiButton
                         style={{
                         borderRadius: "2.813px",

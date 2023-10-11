@@ -59,20 +59,19 @@ body {
   border-radius: 4px;
   width: 100%;
   height: calc(100% - 200px);
-  /* overflow-y: hidden; */
   padding-bottom: 50px;
 }
 
 .cards-container {
   position: relative;
-  transition: opacity 0.3s ease; /* Add a smooth transition for hiding cards */
+  transition: opacity 0.3s ease;
 }
 
 .bottom-bar {
-  position: fixed; /* Absolute positioning within the container */
-  bottom: 50px; /* Stick to the bottom */
-  left: 0; /* Adjust left position if needed */
-  right: 0; /* Adjust right position if needed */
+  position: fixed;
+  bottom: 50px;
+  left: 0;
+  right: 0;
   display: flex;
   flex-direction: column;
   align-items: center;

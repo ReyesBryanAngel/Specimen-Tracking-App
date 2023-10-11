@@ -6,6 +6,7 @@ import {
   EuiPanel,
   EuiText,
 } from "@elastic/eui";
+import { AddSpecimenButton } from "../../components/add-specimen/AddSpecimenButton";
 import React from "react";
 
 const Dashboard = () => {
@@ -187,6 +188,7 @@ const Dashboard = () => {
             </EuiPanel>
           </EuiFlexItem>
         </EuiFlexGrid>
+        <AddSpecimenButton />
       </div>
     </div>
   );
