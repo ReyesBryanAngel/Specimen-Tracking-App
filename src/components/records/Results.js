@@ -10,6 +10,7 @@ import {
 
 } from "@elastic/eui";
 import results from '../../config/results';
+import { AddSpecimenButton } from "../../components/add-specimen/AddSpecimenButton";
 
 const Results = () => {
     const [resultSetter, setresultSetter] = useState([...results]);
@@ -164,6 +165,7 @@ const Results = () => {
                     </EuiFlexGroup>
                 </div>
             </div>
+            <AddSpecimenButton />
         </div>
     )
 }
