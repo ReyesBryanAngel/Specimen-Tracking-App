@@ -4,14 +4,13 @@ import {
     EuiFlexItem,
     EuiCard,
     EuiText,
-    EuiButton,
     EuiPopover,
-    EuiPopoverTitle,
     EuiButtonEmpty,
     EuiListGroup,
     EuiTablePagination
 } from "@elastic/eui";
 import patients from '../../config/patients';
+import  { AddSpecimenButton } from "../../components/add-specimen/AddSpecimenButton";
 
 
 const Patients = () => {
@@ -148,6 +147,7 @@ const Patients = () => {
                     </div>
                 </div>
             </div>
+            <AddSpecimenButton />
         </div>
     )
 }
