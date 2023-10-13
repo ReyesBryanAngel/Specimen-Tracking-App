@@ -166,6 +166,7 @@ const Courier = () => {
                     </div>   
                     <EuiButton
                         style={{
+                        textDecoration: "none",
                         borderRadius: "2.813px",
                         width: "80%",
                         color: "#FFFFFF",

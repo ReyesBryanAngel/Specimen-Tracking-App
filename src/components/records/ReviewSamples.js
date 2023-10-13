@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     EuiFlexGroup,
     EuiFlexItem,
     EuiCard,
     EuiText,
     EuiCheckbox,
-    EuiFormRow,
     EuiButton
 } from "@elastic/eui";
 import patients from '../../config/patients';
 
+
 const ReviewSamples = () => {
+    
+    const [isCheckedList, setIsCheckedList] = useState(patients.map(() => true));
+
+    const onCheckboxChange = (index) => {
+      const newIsCheckedList = [...isCheckedList];
+      newIsCheckedList[index] = !newIsCheckedList[index];
+      setIsCheckedList(newIsCheckedList);
+    }
 
     return (
         <div className="main-content">
@@ -20,7 +28,7 @@ const ReviewSamples = () => {
                         <h2>Review Samples</h2>
                         <span>You are about to send blank samples</span>
                     </div>  
-                <EuiFlexItem style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", marginTop:"20px"}}>
+                <EuiFlexItem style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", marginTop:"20px", paddingBottom: "35px"}}>
                     {patients.map((patient, index) => (
                             <EuiCard
                                 style={{ width: '85%' }}
@@ -28,12 +36,12 @@ const ReviewSamples = () => {
                                 textAlign="left"
                             >
                                 <div style={{ display: "flex", flexWrap: "nowrap",  alignItems: "center" }}>
-                                    <div>
                                     <EuiCheckbox
-                                        id={`checkbox_${index}`}
-                                        checked={true}
+                                        id={`checkbox-${index}`}
+                                        checked={isCheckedList[index]}
+                                        onChange={() => onCheckboxChange(index)}
+                                        style={{ background: 'red', border: '2px solid green' }}
                                     />
-                                    </div>
                                     <div>
                                         <h4>{patient.name}</h4>
                                     </div>
@@ -77,6 +85,7 @@ const ReviewSamples = () => {
                             </EuiButton>
                             <EuiButton
                                 style={{
+                                textDecoration: "none",
                                 borderRadius: "2.813px",
                                 width: "80%",
                                 color: "#FFFFFF",
