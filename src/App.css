@@ -138,6 +138,7 @@ body {
 
 .home-container {
   height: 656px;
+  overflow-y: scroll;
 }
 
 .individual-results-container {
