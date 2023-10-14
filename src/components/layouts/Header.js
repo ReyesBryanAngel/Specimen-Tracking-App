@@ -12,7 +12,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ backButton }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
   const navigate = useNavigate();
@@ -153,7 +153,7 @@ const Header = () => {
   ];
 
   return (
-    <>
+    <div>
       {/* Sidebar */}
       <div
         className={`sidebar ${isSidebarOpen ? "open" : ""}`}
@@ -220,7 +220,7 @@ const Header = () => {
           </EuiHeaderLinks>
         </EuiHeaderSection>
       </EuiHeader>
-    </>
+    </div>
   );
 };
 
