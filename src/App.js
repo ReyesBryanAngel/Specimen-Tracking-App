@@ -31,7 +31,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/courier" element={<Courier/>} />
             <Route path="/results" element={<Results />} />
-            <Route path="/individual-inadequate" element={<IndividualResult />} />
+            <Route path="/individual-result" element={<IndividualResult />} />
             <Route path="/add-specimen/*">
               <Route index element={<ScanBarcode />} />
               <Route path="specimen-form" element={<SpecimenForm />} />

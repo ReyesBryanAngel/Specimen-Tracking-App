@@ -81,11 +81,11 @@ const Results = () => {
         closePopover();
     };
 
-    const filterInadequate = (e, index) => {        
+    const filterIndividualRecord = (e, index) => {        
         const inadequate = resultSetter.filter((i) => i.result); 
         if (inadequate[index].result !== "negative") {
             setData(inadequate[index]);
-            navigate("/individual-inadequate");
+            navigate("/individual-result");
         }
     }
 
@@ -164,7 +164,7 @@ const Results = () => {
                         <EuiFlexItem style={{ display: "flex", gap: "20px"}}>
                             {resultSetter.map((result, index) => (
                                     <EuiButton
-                                        onClick={(e) => filterInadequate(e, index)}
+                                        onClick={(e) => filterIndividualRecord(e, index)}
                                         style={{ 
                                             width: '100%', 
                                             paddingTop: "20px", 
@@ -172,8 +172,8 @@ const Results = () => {
                                             backgroundColor: "#fff",
                                             textDecoration:"none",
                                             color: "black",
-                                            border: '1px solid transparent', // Remove border highlight
-                                            boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.5)', // Add a shadow
+                                            border: '1px solid transparent',
+                                            boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.5)',
                                         }}
                                         key={index}
                                     >
