@@ -52,8 +52,6 @@ body {
   padding: 67px 19px 45px 19px;
   height: 100%;
 }
-
-
 .main-content {
   flex: 1;
   background-color: var(--default);
