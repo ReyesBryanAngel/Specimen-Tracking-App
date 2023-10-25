@@ -49,9 +49,10 @@ body {
 }
 
 .body-content {
-  padding: 88px 19px 45px 19px;
+  padding: 67px 19px 45px 19px;
   height: 100%;
 }
+
 
 .main-content {
   flex: 1;
@@ -138,6 +139,13 @@ body {
 .home-container {
   overflow-y: scroll;
   height: 656px;
+  overflow-y: scroll;
+}
+
+.individual-results-container {
+  height: 500px;
+  display: flex;
+  align-items: flex-start;
 }
 
 .info-container {
@@ -232,6 +240,8 @@ body {
 .flex-col{
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .custom-eui-pagination {
@@ -266,4 +276,9 @@ body {
 
 
 
+.sorter-button {
+  text-decoration: none;
+  color: black;
+  font-size: 12;
+}
 
