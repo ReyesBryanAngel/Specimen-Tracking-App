@@ -6,10 +6,20 @@ import {
   EuiPanel,
   EuiText,
 } from "@elastic/eui";
+import ApiCall from "../../util/authentication/ApiCall";
 import { AddSpecimenButton } from "../../components/add-specimen/AddSpecimenButton";
 import React from "react";
 
 const Dashboard = () => {
+  const {token,logout} = ApiCall();
+
+  const logoutUser = () => {
+    if(token != undefined){
+        logout();
+    }
+  }
+
+
   return (
     <div className="main-content">
       <div className="dashboard-container">
@@ -188,6 +198,9 @@ const Dashboard = () => {
             </EuiPanel>
           </EuiFlexItem>
         </EuiFlexGrid>
+        <EuiButton onClick={logoutUser}>
+          Logout
+        </EuiButton>
         <AddSpecimenButton />
       </div>
     </div>
