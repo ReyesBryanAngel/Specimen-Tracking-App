@@ -10,6 +10,8 @@ import ScanBarcode from "./components/specimen-form/ScanBarcode";
 import SpecimenForm from "./components/specimen-form/SpecimenForm";
 import SpecimenSubmit from "./components/specimen-form/SpecimenSubmit";
 import SpecimenReview from "./components/specimen-form/SpecimenReview";
+import Courier from "./components/records/Courier";
+import Patients from "./components/records/Patients";
 
 function App() {
   const location = useLocation();
@@ -18,11 +20,13 @@ function App() {
   return (
     <div className="content">
       <Header />
-      {!isSpecimenFormPage && <AddSpecimenButton />}
+      {/* {!isSpecimenFormPage && <AddSpecimenButton />} */}
       <div className={"body-content"}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/courier" element={<Courier/>} />
+          <Route path="/patients" element={<Patients/>} />
           <Route path="/add-specimen/*">
             <Route index element={<ScanBarcode />} />
             <Route path="specimen-form" element={<SpecimenForm />} />
