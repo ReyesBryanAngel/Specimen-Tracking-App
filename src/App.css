@@ -266,4 +266,9 @@ body {
 
 
 
+.sorter-button {
+  text-decoration: none;
+  color: black;
+  font-size: 12;
+}
 
