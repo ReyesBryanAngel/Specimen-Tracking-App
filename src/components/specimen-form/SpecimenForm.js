@@ -12,10 +12,25 @@ import { useNavigate } from "react-router-dom";
 
 const SpecimenForm = () => {
   const navigate = useNavigate();
-  const [type, setType] = useState(null);
+  // const [type, setType] = useState(null);
 
-  const onChange = (optionId) => {
-    setType(optionId);
+  // const onChange = () => {
+  //   setType(!type);
+  // };
+
+  const [checkboxes, setCheckboxes] = useState({
+    breast: false,
+    lactoseFormula: false,
+    lactoseFree: false,
+    nPo: false,
+    tPn: false,
+  });
+
+  const onChange = (value) => {
+    setCheckboxes({
+      ...checkboxes,
+      [value]: !checkboxes[value],
+    });
   };
 
   return (
@@ -333,33 +348,43 @@ const SpecimenForm = () => {
                 label={"Feeding (Check all that apply)"}
               >
                 <EuiFlexItem>
-                  <EuiFlexItem grow={false}>
-                    <EuiCheckbox
-                      onChange={onChange}
-                      label="Breast"
-                      value="breast"
-                    />
-                  </EuiFlexItem>
-                  <EuiFlexItem grow={false}>
-                    <EuiCheckbox
-                      onChange={onChange}
-                      label="Lactose Formula"
-                      value="lactoseFormula"
-                    />
-                  </EuiFlexItem>
-                  <EuiFlexItem grow={false}>
-                    <EuiCheckbox
-                      onChange={onChange}
-                      label="Soy/Lactose-Free"
-                      value="lactoseFree"
-                    />
-                  </EuiFlexItem>
-                  <EuiFlexItem grow={false}>
-                    <EuiCheckbox onChange={onChange} label="NPO" value="npo" />
-                  </EuiFlexItem>
-                  <EuiFlexItem grow={false}>
-                    <EuiCheckbox onChange={onChange} label="TPN" value="tpn" />
-                  </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiCheckbox
+                    onChange={() => onChange('breast')}
+                    checked={checkboxes.breast}
+                    label="Breast"
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiCheckbox
+                    onChange={() => onChange('lactoseFormula')}
+                    checked={checkboxes.lactoseFormula}
+                    label="Lactose Formula"
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiCheckbox
+                    onChange={() => onChange('lactoseFree')}
+                    checked={checkboxes.lactoseFree}
+                    label="Soy/Lactose-Free"
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiCheckbox 
+                    onChange={() => onChange('nPo')} 
+                    checked={checkboxes.nPo}
+                    label="NPO" 
+                    value="npo" 
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiCheckbox 
+                    onChange={() => onChange('tPn')} 
+                    checked={checkboxes.tPn}
+                    label="TPN" 
+                    value="tpn" 
+                  />
+                </EuiFlexItem>
                 </EuiFlexItem>
               </EuiFormRow>
             </EuiFlexItem>
