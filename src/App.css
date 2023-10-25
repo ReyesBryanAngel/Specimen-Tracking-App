@@ -136,6 +136,7 @@ body {
 }
 
 .home-container {
+  overflow-y: scroll;
   height: 656px;
 }
 
