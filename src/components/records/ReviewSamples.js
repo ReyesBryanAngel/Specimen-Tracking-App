@@ -8,10 +8,11 @@ import {
     EuiButton
 } from "@elastic/eui";
 import patients from '../../config/patients';
+import { useNavigate } from 'react-router-dom';
 
 
 const ReviewSamples = () => {
-    
+    const navigate = useNavigate();
     const [isCheckedList, setIsCheckedList] = useState(patients.map(() => true));
 
     const onCheckboxChange = (index) => {
@@ -78,7 +79,7 @@ const ReviewSamples = () => {
                                 }}
                                 
                                 onClick={() => {
-                                    //
+                                    navigate("/courier-information")
                                 }}
                             >
                                 Input Manual Courier Information

@@ -16,7 +16,8 @@ import Courier from "./components/records/Courier";
 import Patients from "./components/records/Patients"
 import Results from "./components/records/Results";
 import IndividualResult from "./components/records/IndividualResult";
-import ReviewSamples from "./components/records/ReviewSamples"
+import ReviewSamples from "./components/records/ReviewSamples";
+import CourierInformation from "./components/courier/CourierInformation";
 
 function App() {
   const location = useLocation();
@@ -36,6 +37,7 @@ function App() {
             <Route path="/results" element={<Results />} />
             <Route path="/individual-result" element={<IndividualResult />} />
             <Route path="/review-samples" element={<ReviewSamples/>} />
+            <Route path="/courier-information" element={<CourierInformation/>} />
             <Route path="/add-specimen/*">
               <Route index element={<ScanBarcode />} />
               <Route path="specimen-form" element={<SpecimenForm />} />
