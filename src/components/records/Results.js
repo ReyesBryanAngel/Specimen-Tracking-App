@@ -2,17 +2,22 @@ import React, { useState } from 'react';
 import {
     EuiFlexGroup,
     EuiFlexItem,
-    EuiCard,
+    EuiButton,
     EuiText,
     EuiPopover,
     EuiButtonEmpty,
     EuiListGroup,
-
 } from "@elastic/eui";
-import results from '../../config/results';
+import { useNavigate } from 'react-router-dom';
+import { useData } from '../../context/DataProvider';
+import results from '../../config/results'
 import { AddSpecimenButton } from "../../components/add-specimen/AddSpecimenButton";
 
+
+
 const Results = () => {
+    const { setData } = useData();
+    const navigate = useNavigate();
     const [resultSetter, setresultSetter] = useState([...results]);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
@@ -21,6 +26,13 @@ const Results = () => {
             label: (
                 <span onClick={() => sortByBirthday()}>
                     Birthday
+                </span>
+                ),
+        },
+        {
+            label: (
+                <span onClick={() => showAllFunction()}>
+                    Show All
                 </span>
                 ),
         }
@@ -44,6 +56,10 @@ const Results = () => {
         closePopover();
     };
 
+    const showAllFunction = () => {
+        setresultSetter([...results])
+    }
+
     const sortByNegative = () => {
         const negativeResults = results.filter((results) => results.result === "negative");
 
@@ -65,6 +81,14 @@ const Results = () => {
         closePopover();
     };
 
+    const filterIndividualRecord = (e, index) => {        
+        const inadequate = resultSetter.filter((i) => i.result); 
+        if (inadequate[index].result !== "negative") {
+            setData(inadequate[index]);
+            navigate("/individual-result");
+        }
+    }
+
     return (
         <div className="main-content">
             <div className="specimen-form-container">
@@ -82,8 +106,8 @@ const Results = () => {
                                 <>Results (by Mother's Name)</>
                                 </h5>
                             </div>
-                            <div style={{ alignSelf: "end", marginTop: "10px" }}>
-                                <div style={{ display: "flex", flexWrap: "nowrap"}}>
+                            <div style={{ marginTop: "10px"}}>
+                                <div style={{ display: "flex"}}>
                                     <EuiButtonEmpty
                                         size="s"
                                         iconSide="right"
@@ -137,15 +161,27 @@ const Results = () => {
                                 </div>
                             </div>
                         </div>
-                        <EuiFlexItem style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px"}}>
+                        <EuiFlexItem style={{ display: "flex", gap: "20px"}}>
                             {resultSetter.map((result, index) => (
-                                    <EuiCard
-                                        style={{ width: '95%' }}
+                                    <EuiButton
+                                        onClick={(e) => filterIndividualRecord(e, index)}
+                                        style={{ 
+                                            width: '100%', 
+                                            paddingTop: "20px", 
+                                            height: "100%", 
+                                            backgroundColor: "#fff",
+                                            textDecoration:"none",
+                                            color: "black",
+                                            border: '1px solid transparent',
+                                            boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.5)',
+                                        }}
                                         key={index}
-                                        textAlign="left"
                                     >
-                                        <h4>{result.name}</h4>
-                                        <div className="flex-row">
+                                        <div className="flex-col">
+                                            <div style={{ textAlign: "left" }}>
+                                                <h4 style={{ alignSelf: "self-start" }}>{result.name}</h4>
+                                            </div>
+                                            <div className="flex-row" style={{ marginBottom: "20px" }}>
                                                 <div className="flex-col">
                                                     <span style={{ fontSize: "14px"}}>Birthday</span>
                                                     <EuiText style={{ fontSize: "16px" }}>{result.birthday}</EuiText>
@@ -159,7 +195,8 @@ const Results = () => {
                                                     <EuiText style={{ fontSize: "16px" }}>{result.result}</EuiText>
                                                 </div>
                                             </div>
-                                    </EuiCard>
+                                        </div>
+                                    </EuiButton>
                                 ))}
                         </EuiFlexItem>
                     </EuiFlexGroup>
