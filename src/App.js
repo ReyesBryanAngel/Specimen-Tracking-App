@@ -11,6 +11,7 @@ import SpecimenForm from "./components/specimen-form/SpecimenForm";
 import SpecimenSubmit from "./components/specimen-form/SpecimenSubmit";
 import SpecimenReview from "./components/specimen-form/SpecimenReview";
 import Courier from "./components/records/Courier";
+import Patients from "./components/records/Patients";
 import Results from "./components/records/Results";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/courier" element={<Courier/>} />
+          <Route path="/patients" element={<Patients/>} />
           <Route path="/results" element={<Results />} />
           <Route path="/add-specimen/*">
             <Route index element={<ScanBarcode />} />
