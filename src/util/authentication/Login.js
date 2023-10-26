@@ -9,7 +9,9 @@ import {
   EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiIcon
+  EuiIcon,
+  EuiFieldPassword,
+  EuiProvider
 } from "@elastic/eui";
 
 const Login = () => {
@@ -41,80 +43,89 @@ const Login = () => {
   }
 
   return (
+    <EuiProvider>
     <div className='main-content'>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "40px" }}>
-        <EuiTitle><h3>NSF</h3></EuiTitle>
-        <EuiText size='m'>Facility Login</EuiText>
+        
+          <EuiTitle><h3>NSF</h3></EuiTitle>
+          <EuiText size='m'>Facility Login</EuiText>
 
-        {error && (
-          <EuiCallOut
-            color="danger"
+          {error && (
+            <EuiCallOut
+              color="danger"
+            >
+              {<p style={{ color: "#BD271E" }}>{error}</p>}
+            </EuiCallOut>
+          )}
+
+          <div style={{ width: "80%" }}>
+            <EuiFormLabel>Email or Username</EuiFormLabel>
+            <EuiFieldText
+              onChange={e => setEmail(e.target.value)}
+              id="email"
+              name="email"
+              style={{
+                border: "1px solid #D3D3D3",
+                borderRadius: "4px",
+                height: "32px",
+                width: "100%"
+              }}
+            />
+          </div>
+          <div style={{ width: "80%", position:"relative" }}>
+            <EuiFormLabel>Password</EuiFormLabel>
+            {/* <EuiFieldText
+              onChange={e => setPassword(e.target.value)}
+              id="password"
+              name="password"
+              type={isPasswordVisible ? "text" : "password"}
+              style={{
+                border: "1px solid #D3D3D3",
+                borderRadius: "4px",
+                height: "32px",
+                width: "91%",
+                paddingLeft: '30px',
+              }}
+              append={
+                <EuiFlexGroup gutterSize="l" style={{ position: "absolute", right: 4, bottom: 9 }}>
+                  <EuiFlexItem grow={false}>
+                    <EuiIcon
+                      type={isPasswordVisible ? "eyeClosed" : "eye"}
+                      onClick={togglePasswordVisibility}
+                    />
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              }
+              prepend={
+                <EuiFlexGroup gutterSize="l" style={{ position: "absolute", left: 6, bottom: 9 }}>
+                  <EuiFlexItem grow={false}>
+                    <EuiIcon type="lock" />
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              }
+            /> */}
+            <EuiFieldPassword
+              onChange={e => setPassword(e.target.value)}
+              type="dual"
+            />
+          </div>
+          <EuiButton
+            style={{
+              borderRadius: "2.813px",
+              width: "80%",
+              color: "#FFFFFF",
+              backgroundColor: "#01B5AC",
+              border: "0px",
+            }}
+            onClick={submitForm}
           >
-            {<p style={{ color: "#BD271E" }}>{error}</p>}
-          </EuiCallOut>
-        )}
-
-        <div style={{ width: "80%" }}>
-          <EuiFormLabel>Email or Username</EuiFormLabel>
-          <EuiFieldText
-            onChange={e => setEmail(e.target.value)}
-            id="email"
-            name="email"
-            style={{
-              border: "1px solid #D3D3D3",
-              borderRadius: "4px",
-              height: "32px",
-              width: "100%"
-            }}
-          />
-        </div>
-        <div style={{ width: "80%", position:"relative" }}>
-          <EuiFormLabel>Password</EuiFormLabel>
-          <EuiFieldText
-            onChange={e => setPassword(e.target.value)}
-            id="password"
-            name="password"
-            type={isPasswordVisible ? "text" : "password"}
-            style={{
-              border: "1px solid #D3D3D3",
-              borderRadius: "4px",
-              height: "32px",
-              width: "91%",
-              paddingLeft: '30px',
-            }}
-            append={
-              <EuiFlexGroup gutterSize="l" style={{ position: "absolute", right: 4, bottom: 9 }}>
-                <EuiFlexItem grow={false}>
-                  <EuiIcon
-                    type={isPasswordVisible ? "eyeClosed" : "eye"}
-                    onClick={togglePasswordVisibility}
-                  />
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            }
-            prepend={
-              <EuiFlexGroup gutterSize="l" style={{ position: "absolute", left: 6, bottom: 9 }}>
-                <EuiFlexItem grow={false}>
-                  <EuiIcon type="lock" />
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            }
-          />
-        </div>
-        <EuiButton
-          style={{
-            borderRadius: "2.813px",
-            width: "80%",
-            color: "#FFFFFF",
-            backgroundColor: "#01B5AC",
-            border: "0px",
-          }}
-          onClick={submitForm}
-        >
-          Login
-        </EuiButton>
+            Login
+          </EuiButton>
+          
       </div>
+      
     </div>
+    </EuiProvider>
   )
 }
 

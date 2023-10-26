@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Routes, Navigate   } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-// import AppContext from "./context/AppContext";
 import { DataProvider } from "./context/DataProvider";
-import ReactDOM from 'react-dom'
-import { useLocation } from "react-router-dom";
-import { AddSpecimenButton } from "./components/add-specimen/AddSpecimenButton";
 import Dashboard from "./components/dashboard/Dasboard";
 import Home from "./components/home/Home";
 import Header from "./components/layouts/Header";
@@ -21,15 +17,12 @@ import Login from "./util/authentication/Login";
 import ProtectedRoute from './util/ProtectedRoute';
 import ReviewSamples from "./components/records/ReviewSamples";
 import CourierInformation from "./components/courier/CourierInformation";
-
+import '@elastic/eui/dist/eui_theme_light.css';
 
 function App() {
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const checkUserToken = () => {
     const userToken = sessionStorage.getItem('token');
-    console.log(userToken);
     if (userToken && userToken !== 'undefined') {
       setIsLoggedIn(true);
     } else {
@@ -62,7 +55,6 @@ function App() {
             <Route path="/add-specimen/specimen-form" element={<ProtectedRoute isLoggedIn={isLoggedIn}><SpecimenForm /></ProtectedRoute>} />
             <Route path="/add-specimen/specimen-review" element={<ProtectedRoute isLoggedIn={isLoggedIn}><SpecimenReview /></ProtectedRoute>} />
             <Route path="/add-specimen/specimen-submit" element={<ProtectedRoute isLoggedIn={isLoggedIn}><SpecimenSubmit /></ProtectedRoute>} />
-
           </Routes>
         </div>
       </div>

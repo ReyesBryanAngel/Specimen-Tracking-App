@@ -2,17 +2,63 @@ import {
     EuiFlexGroup,
     EuiFlexItem,
     EuiFormRow,
-    EuiButton
+    EuiButton,
+    EuiCallOut,
+    EuiIcon
 } from "@elastic/eui";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useData } from '../../context/DataProvider';
+import ApiCall from '../../util/authentication/ApiCall';
 
 const SpecimenReview = () => {
+    const { specimenData } = useData();
+    const { http } = ApiCall();
+    const [error, setError] = useState(null);
+    const [modal, setModal] = useState(false);
     const navigate = useNavigate();
+
+    const submitSepcimen = () => {
+        http.post('/v1/specimens', specimenData)
+      .then((res) => {
+        if (res?.data?.status === 200) {
+            navigate("/add-specimen/specimen-submit")
+        }
+      })
+      .catch((e) => {
+        setModal(true);
+        setError(e.response?.data?.message)
+      });
+    }
+
+    const clostModal  = () => {
+        setModal(false);
+    }
     return (
         <div className="main-content">
             <div className="specimen-form-container">
                 <div className="specimen-form-content-container">
+                    {modal && (
+                        <div 
+                            style={{ 
+                                position: 'fixed',
+                                top: '40%',
+                                left: '50%',
+                                transform: 'translate(-50%, -290%)',
+                                height: '90px',
+                                width: '250px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent:"center",
+                                textAlign:"center"
+                            }}
+                        >
+                            <EuiCallOut color="danger" style={{ position:"relative" }}>
+                                <EuiIcon type="error" size="m" style={{ position:"absolute", top: 6, right: 7 }} onClick={clostModal} />
+                                {<p style={{ paddingBottom:"20px", color: "#BD271E" }}>{error}</p>}
+                            </EuiCallOut>
+                        </div>
+                    )}
                     <EuiFlexGroup style={{ gap: "20px", marginBottom: "20px" }}>
                         <EuiFlexItem className="specimen-form-title-container">
                             <h4
@@ -38,7 +84,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                Initial Sample
+                                {specimenData.type_of_sample}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -53,7 +99,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                Mercado
+                                {specimenData.baby_last_name}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -68,7 +114,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                N/A
+                                {specimenData.for_multiple_births}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -83,7 +129,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                Ma. Elizabeth
+                                {specimenData.mothers_first_name}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -98,7 +144,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                28/02/2023 09:44 AM
+                                {specimenData.date_and_time_of_birth}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -113,7 +159,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                Male
+                                {specimenData.sex}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -128,7 +174,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                45
+                                {specimenData.babys_weight_in_grams}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -143,7 +189,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                28/02/2023 11:32 AM
+                                {specimenData.date_and_time_of_collection}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -158,7 +204,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                39
+                                {specimenData.age_of_gestation_in_weeks}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -173,7 +219,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                Heel
+                                {specimenData.specimens}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -203,7 +249,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                Ospital ng Makati
+                               {specimenData.place_of_collection}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -218,7 +264,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               Ospital ng Makati
+                              {specimenData.place_of_birth}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -233,7 +279,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               Dela Cruz, Juan
+                               {specimenData.attending_practitioner}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -248,9 +294,11 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               Doctor
+                                {specimenData.practitioner_profession !== "other" ? 
+                                specimenData.practitioner_profession : 
+                                specimenData.practitioner_profession_other}
                             </EuiFlexItem>
-                        </EuiFormRow>
+                        </EuiFormRow>  
                         <EuiFormRow
                             fullWidth
                             style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
@@ -263,7 +311,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               09123456789
+                               {specimenData.practitioners_day_contact_number}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -278,7 +326,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               09987654321
+                               {specimenData.practitioners_mobile_number}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -293,7 +341,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               Normal
+                               {specimenData.baby_status}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -308,7 +356,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               Ma. Elizabeth Mercado
+                               {specimenData.name_of_parent}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -323,7 +371,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               21 Chico
+                               {specimenData.number_and_street}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -338,7 +386,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               Ugong, Pasig
+                               {specimenData.barangay_or_city}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -353,7 +401,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                NCR
+                                {specimenData.province}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -368,7 +416,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                1604
+                                {specimenData.zip_code}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -383,7 +431,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                09112233445
+                                {specimenData.contact_number_of_parent}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -398,7 +446,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                09887766554
+                                {specimenData.additional_contact_number}
                             </EuiFlexItem>
                         </EuiFormRow>
                     </EuiFlexGroup>
@@ -421,7 +469,7 @@ const SpecimenReview = () => {
                             }}
                             fullWidth
                             onClick={() => {
-                                navigate("/add-specimen");
+                                navigate("/add-specimen/specimen-form");
                             }}
                         >
                             <p
@@ -441,9 +489,8 @@ const SpecimenReview = () => {
                                 border: "0px",
                             }}
                             fullWidth
-                            onClick={() => {
-                                navigate("/add-specimen/specimen-submit")
-                            }}
+                            onClick={submitSepcimen}
+
                         >
                             <p
                                 style={{

@@ -1,15 +1,26 @@
 import {
-    EuiFlexGroup,
     EuiFlexItem,
-    EuiFormRow,
     EuiButton,
     EuiText
 } from "@elastic/eui";
 import React from "react";
+import { useData } from '../../context/DataProvider';
 import { useNavigate } from "react-router-dom";
 
 const SpecimenSubmit = () => {
     const navigate = useNavigate();
+    const { specimenData, dispatch } = useData();
+    const mother = `${specimenData.baby_last_name}, ${specimenData.mothers_first_name}`;
+
+    const goToHome = () => {
+      navigate("/");
+      dispatch({ type: 'RESET' });
+    }
+
+    const newForm = () => {
+      navigate("/add-specimen/specimen-form");
+      dispatch({ type: 'RESET' });
+    }
 
     return (
         <div className="main-content">
@@ -34,7 +45,7 @@ const SpecimenSubmit = () => {
               fontSize: "16px",
             }}
           >
-             You have submitted the Specimen Form of <span style={{ fontWeight: "bold" }}>Mercado, Ma. Elizabeth</span>'s child.
+             You have submitted the Specimen Form of <span style={{ fontWeight: "bold" }}>{mother}</span>'s child.
             Go to Home Fill Up New Form
           </p>
         </EuiText>
@@ -60,9 +71,7 @@ const SpecimenSubmit = () => {
                 backgroundColor: "#69707D33",
                 border: "0px",
               }}
-              onClick={() => {
-                navigate("/");
-              }}
+              onClick={goToHome}
             >
               <p
                 style={{
@@ -80,9 +89,7 @@ const SpecimenSubmit = () => {
                 backgroundColor: "#01B5AC",
                 border: "0px",
               }}
-              onClick={() => {
-                navigate("/add-specimen/specimen-form");
-              }}
+              onClick={newForm}
             >
               <p
                 style={{

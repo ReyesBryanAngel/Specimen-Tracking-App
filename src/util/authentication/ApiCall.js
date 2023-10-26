@@ -40,6 +40,19 @@ function ApiCall () {
             "Content-type" : "application/json"
         }
     });
+
+    http.interceptors.request.use(
+        (config) => {
+            const token = getToken();
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        },
+        (error) => {
+            return Promise.reject(error);
+        }
+    );
     return {
         setToken:saveToken,
         token,
