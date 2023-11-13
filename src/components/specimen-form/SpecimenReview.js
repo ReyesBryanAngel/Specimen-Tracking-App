@@ -18,6 +18,10 @@ const SpecimenReview = () => {
     const [modal, setModal] = useState(false);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        console.log(specimenData);
+    })
+
     const submitSepcimen = () => {
         http.post('/v1/specimens', specimenData)
       .then((res) => {

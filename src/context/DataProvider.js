@@ -16,6 +16,7 @@ export const DataProvider = ({ children }) => {
     date_and_time_of_collection: '',
     age_of_gestation_in_weeks: '',
     specimens: '',
+    specimen_status: 'Pending',
     place_of_collection: '',
     place_of_birth: '', 
     attending_practitioner: '',
@@ -40,6 +41,8 @@ export const DataProvider = ({ children }) => {
         return initialSpecimenState;
       case 'UPDATE':
         return { ...state, ...action.payload };
+      case 'CATCH':
+        return {...action.payload};
       default:
         return state;
     }

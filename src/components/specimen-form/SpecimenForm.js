@@ -48,6 +48,7 @@ const SpecimenForm = () => {
       age_of_gestation_in_weeks: specimenData.age_of_gestation_in_weeks,
       sex: specimenData.sex,
       specimens: specimenData.specimens,
+      specimen_status: specimenData.specimen_status,
       place_of_collection: specimenData.place_of_collection,
       attending_practitioner: specimenData.attending_practitioner,
       practitioners_day_contact_number: specimenData.practitioners_day_contact_number,
@@ -109,6 +110,7 @@ const SpecimenForm = () => {
     }),
     onSubmit: (values) => {
       dispatch({ type: 'UPDATE', payload: values });
+      formik.setFieldValue("specimen_status", "Pending");
       navigate("/add-specimen/specimen-review")
     },
   });
@@ -203,7 +205,7 @@ const SpecimenForm = () => {
               <EuiFlexItem>
                 <EuiFormRow
                   fullWidth
-                  style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                  style={{ fontSize: "12px", fontWeight: "bold", width: "80%" }}
                   label={"Baby’s Last Name"}
                 >
                   <EuiFieldText
