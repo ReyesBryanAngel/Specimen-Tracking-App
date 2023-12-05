@@ -18,10 +18,13 @@ import ProtectedRoute from './util/ProtectedRoute';
 import ReviewSamples from "./components/records/ReviewSamples";
 import CourierInformation from "./components/courier/CourierInformation";
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import '@elastic/eui/dist/eui_theme_light.css';
 import CourierSample from './components/records/CourierSample';
+import { useNavigate } from 'react-router-dom';
+import RepeatForm from './components/specimen-form/RepeatForm';
+
 
 function App() {
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const checkUserToken = () => {
     const userToken = sessionStorage.getItem('token');
@@ -41,10 +44,9 @@ function App() {
     <DataProvider>
       <QueryClientProvider client={queryCLient}>
         <div className="content">
-          <Header />
+        {navigate && window.location.pathname !== '/login' && <Header />}
           <div className={"body-content"}>
             <Routes>
-
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Home /></ProtectedRoute>} />
               <Route path="/dashboard/*" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Dashboard /></ProtectedRoute>} />
@@ -60,6 +62,7 @@ function App() {
               <Route path="/add-specimen/specimen-form" element={<ProtectedRoute isLoggedIn={isLoggedIn}><SpecimenForm /></ProtectedRoute>} />
               <Route path="/add-specimen/specimen-review" element={<ProtectedRoute isLoggedIn={isLoggedIn}><SpecimenReview /></ProtectedRoute>} />
               <Route path="/add-specimen/specimen-submit" element={<ProtectedRoute isLoggedIn={isLoggedIn}><SpecimenSubmit /></ProtectedRoute>} />
+              <Route path="/add-specimen/repeat-form" element={<ProtectedRoute isLoggedIn={isLoggedIn}><RepeatForm /></ProtectedRoute>} />
             </Routes>
           </div>
         </div>

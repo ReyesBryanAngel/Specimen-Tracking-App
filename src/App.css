@@ -1,3 +1,5 @@
+@import '@elastic/eui/dist/eui_theme_light.css';
+
 :root {
   --primary-main: #01b5ac;
   --secondary-main: #b2e8e6;
@@ -57,8 +59,44 @@ body {
   background-color: var(--default);
   border-radius: 4px;
   width: 100%;
+  padding-bottom: 85px;
+}
+
+.login-content {
+  background-color: var(--default);
+  border-radius: 4px;
+  width: 100%;
+}
+
+.policy-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 12vh;
+  background-color: var(--default);
+}
+
+.euiListGroupItem {
+  color: green;
+}
+
+.review-samples-content {
+  flex: 1;
+  background-color: var(--default);
+  border-radius: 4px;
+  width: 100%;
   height: calc(100% - 200px);
-  padding-bottom: 50px;
+  padding-bottom: 100px;
+}
+
+.review-samples-container {
+  overflow-y: scroll;
+  height: 550px;
+}
+
+.link-container {
+  height: 10vh
 }
 
 .cards-container {
@@ -66,9 +104,9 @@ body {
   transition: opacity 0.3s ease;
 }
 
-.bottom-bar {
-  position: fixed;
-  bottom: 15px;
+.review-samples-button {
+  position: absolute;
+  bottom: 95px;
   left: 0;
   right: 0;
   display: flex;
@@ -77,6 +115,19 @@ body {
   justify-content: center;
   z-index: 1;
 }
+
+.courier-samples-button {
+  position: absolute;
+  bottom: 85px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
 
 .warning-modal {
   position: 'fixed';
@@ -117,20 +168,21 @@ body {
 .sidebar {
   position: fixed;
   top: 0;
-  left: -50%;
-  width: 50%;
+  left: -60%;
+  width: 60%;
   height: 100%;
   background-color: #f0f0f0;
   transition: left 0.3s ease-in-out;
   z-index: 1000;
-  padding-top: 25px;
-  padding-left: 5px;
 }
 
-.sidebar.open {
-  left: 0; /* Displayed on the screen */
+.bottom {
+  margin-top: 13rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
-
+ 
 .euiSideNavItem {
   margin-bottom: 0;
   padding: 0;
@@ -138,7 +190,11 @@ body {
 
 .euiSideNavItemButton {
   border: none;
+  margin-bottom: 0;
   padding: 0;
+}
+.sidebar.open {
+  left: 0;
 }
 
 .title {
@@ -147,7 +203,7 @@ body {
 
 .home-container {
   overflow-y: scroll;
-  height: 656px;
+  height: 570px;
 }
 
 .individual-results-container {
@@ -161,9 +217,9 @@ body {
   margin-bottom: 16px;
 }
 
-.dashboard-title-container {
+/* .dashboard-title-container {
   margin: 21px 0px 19px 18px;
-}
+} */
 
 .euiCard__title {
   margin: 10px 0; /* Adjust the top and bottom margins as needed */
@@ -220,6 +276,11 @@ body {
   padding-bottom: 5px;
 }
 
+.date-picker {
+  height: "13px";
+  width: "90%"
+}
+
 .floating-add-button {
   position: fixed;
   width: 60px;
@@ -249,6 +310,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* align-items: center; */
   width: 100%;
 }
 
@@ -258,10 +320,15 @@ body {
   height: 32px;
 }
 
-.custom-eui-pagination {
+/* .custom-eui-pagination {
   display: flex;
-}
+  white-space: "nowrap";
+} */
 
+/* .custom-eui-pagination .pagination {
+  display: flex;
+  white-space: "nowrap";
+} */
 .custom-eui-pagination button {
   border: none;
   background-color: transparent;

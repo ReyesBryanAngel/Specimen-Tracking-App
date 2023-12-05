@@ -6,35 +6,66 @@ import {
     EuiCallOut,
     EuiIcon
 } from "@elastic/eui";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useData } from '../../context/DataProvider';
 import ApiCall from '../../util/authentication/ApiCall';
+import { useQuery } from "@tanstack/react-query";
 
 const SpecimenReview = () => {
-    const { specimenData } = useData();
+    const { specimenData, feedingValues, createSpecimen, setCreateSpecimen } = useData();
     const { http } = ApiCall();
     const [error, setError] = useState(null);
     const [modal, setModal] = useState(false);
+    const [specimenLoad, setSpecimenLoad] = useState(false);
+    const { dispatch } = useData();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        console.log(specimenData);
+    const { data: refreshSpecimen, isLoading: refreshSpecimenLoading } = useQuery({
+        queryKey: ["sample"],
+        enabled: !specimenLoad || !createSpecimen,
+        retryDelay: 500,
+        refetchOnWindowFocus: false,
+        queryFn: () =>
+            http
+                .get(`v1/specimens/refresh-specimen`)
+                .then((res) => {
+                    setSpecimenLoad(true);
+                    return res?.data;
+                })
     })
 
-    const submitSepcimen = () => {
+    const submitSepcimen = async() => {
         http.post('/v1/specimens', specimenData)
-      .then((res) => {
-        if (res?.data?.status === 200) {
-            navigate("/add-specimen/specimen-submit")
-        }
-      })
-      .catch((e) => {
-        setModal(true);
-        setError(e.response?.data?.message)
-      });
+            .then((res) => {
+                if (res?.data?.status === 200) {
+                    http.post(`v1/specimens/feeding/${res?.data?.specimen_id}`, {feedings: feedingValues})
+                    navigate("/add-specimen/specimen-submit")
+                    setCreateSpecimen(false);
+                }
+         })
+        .catch((e) => {
+            setModal(true);
+            setError(e.response?.data?.message)
+        });    
     }
 
+    const updateSpecimen = async() => {
+        const updatedSpecimenData = {
+            ...specimenData,
+            type_of_sample: 'Repeat Sample',
+            specimen_status: refreshSpecimen?.samples?.specimen_status
+          };
+
+        http.put(`v1/specimens/${refreshSpecimen?.samples?.id}`, updatedSpecimenData)
+        .then((res) => {
+
+            if (res?.data?.status === 200) {
+                navigate("/dashboard");
+                dispatch({ type: 'RESET' });
+            }
+     })
+    }
     const clostModal  = () => {
         setModal(false);
     }
@@ -75,7 +106,7 @@ const SpecimenReview = () => {
                                 Specimen Form
                             </h4>
                         </EuiFlexItem>
-
+                    { createSpecimen && (
                         <EuiFormRow
                             fullWidth
                             style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
@@ -88,9 +119,11 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {specimenData.type_of_sample}
+                                {specimenData?.type_of_sample}
                             </EuiFlexItem>
                         </EuiFormRow>
+                    )}
+                        
                         <EuiFormRow
                             fullWidth
                             style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
@@ -103,7 +136,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {specimenData.baby_last_name}
+                                {createSpecimen ? specimenData?.baby_last_name : refreshSpecimen?.samples?.baby_last_name}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -118,7 +151,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {specimenData.for_multiple_births}
+                                {createSpecimen ? specimenData?.for_multiple_births : refreshSpecimen?.samples?.for_multiple_births}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -133,7 +166,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {specimenData.mothers_first_name}
+                                {createSpecimen ? specimenData?.mothers_first_name : refreshSpecimen?.samples?.mothers_first_name}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -148,7 +181,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {specimenData.date_and_time_of_birth}
+                                {createSpecimen ? specimenData?.date_and_time_of_birth : refreshSpecimen?.samples?.date_and_time_of_birth}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -163,9 +196,10 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {specimenData.sex}
+                                {createSpecimen ? specimenData?.sex : refreshSpecimen?.samples?.sex}
                             </EuiFlexItem>
                         </EuiFormRow>
+                        { createSpecimen && (
                         <EuiFormRow
                             fullWidth
                             style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
@@ -178,9 +212,10 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {specimenData.babys_weight_in_grams}
+                                {specimenData?.babys_weight_in_grams}
                             </EuiFlexItem>
                         </EuiFormRow>
+                        )}
                         <EuiFormRow
                             fullWidth
                             style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
@@ -193,9 +228,10 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {specimenData.date_and_time_of_collection}
+                                {createSpecimen ? specimenData?.date_and_time_of_collection : refreshSpecimen?.samples?.date_and_time_of_collection}
                             </EuiFlexItem>
                         </EuiFormRow>
+                        { createSpecimen && (
                         <EuiFormRow
                             fullWidth
                             style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
@@ -208,9 +244,11 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {specimenData.age_of_gestation_in_weeks}
+                                {specimenData?.age_of_gestation_in_weeks}
                             </EuiFlexItem>
-                        </EuiFormRow>
+                            </EuiFormRow>
+                        )}
+                        
                         <EuiFormRow
                             fullWidth
                             style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
@@ -223,9 +261,10 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {specimenData.specimens}
+                                {createSpecimen ? specimenData?.specimens : refreshSpecimen?.samples?.specimens}
                             </EuiFlexItem>
                         </EuiFormRow>
+                        {createSpecimen && (
                         <EuiFormRow
                             fullWidth
                             style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
@@ -235,12 +274,14 @@ const SpecimenReview = () => {
                                 style={{
                                     marginTop: "5px",
                                     gap: "5px",
-                                    fontWeight: "normal"
+                                    fontWeight: "normal",
                                 }}
                             >
-                                Breast, Lactose Formula
+                                {feedingValues.join(', ')}
                             </EuiFlexItem>
                         </EuiFormRow>
+                        )}
+                        
                         <EuiFormRow
                             fullWidth
                             style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
@@ -253,7 +294,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               {specimenData.place_of_collection}
+                            {specimenData?.place_of_collection}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -268,7 +309,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                              {specimenData.place_of_birth}
+                            {createSpecimen ? specimenData?.place_of_birth : refreshSpecimen?.samples?.place_of_birth}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -283,9 +324,10 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               {specimenData.attending_practitioner}
+                            {createSpecimen ? specimenData?.attending_practitioner : refreshSpecimen?.samples?.attending_practitioner}
                             </EuiFlexItem>
                         </EuiFormRow>
+                        { (specimenData.practitioner_profession !== "other" || refreshSpecimen?.samples?.practitioner_profession !== "other")  && (
                         <EuiFormRow
                             fullWidth
                             style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
@@ -298,11 +340,11 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {specimenData.practitioner_profession !== "other" ? 
-                                specimenData.practitioner_profession : 
-                                specimenData.practitioner_profession_other}
+                                {createSpecimen ? specimenData?.practitioner_profession : refreshSpecimen?.samples?.practitioner_profession}
                             </EuiFlexItem>
                         </EuiFormRow>  
+                        )}
+                        
                         <EuiFormRow
                             fullWidth
                             style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
@@ -315,7 +357,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               {specimenData.practitioners_day_contact_number}
+                            {createSpecimen ? specimenData?.practitioners_day_contact_number : refreshSpecimen?.samples?.practitioners_day_contact_number}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -330,129 +372,127 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                               {specimenData.practitioners_mobile_number}
+                            {createSpecimen ? specimenData?.practitioners_mobile_number : refreshSpecimen?.samples?.practitioners_mobile_number}
                             </EuiFlexItem>
                         </EuiFormRow>
-                        <EuiFormRow
-                            fullWidth
-                            style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                            label={"Baby Status"}
-                        >
-                            <EuiFlexItem
-                                style={{
-                                    marginTop: "5px",
-                                    gap: "5px",
-                                    fontWeight: "normal"
-                                }}
+                        {createSpecimen && (
+                            <>
+                            <EuiFormRow
+                                fullWidth
+                                style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                                label={"Baby Status"}
                             >
-                               {specimenData.baby_status}
-                            </EuiFlexItem>
-                        </EuiFormRow>
-                        <EuiFormRow
-                            fullWidth
-                            style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                            label={"Name of Parent/Guardian"}
-                        >
-                            <EuiFlexItem
-                                style={{
-                                    marginTop: "5px",
-                                    gap: "5px",
-                                    fontWeight: "normal"
-                                }}
+                                <EuiFlexItem
+                                    style={{
+                                        marginTop: "5px",
+                                        gap: "5px",
+                                        fontWeight: "normal"
+                                    }}
+                                >
+                                    {specimenData?.baby_status}
+                                </EuiFlexItem>
+                            </EuiFormRow><EuiFormRow
+                                fullWidth
+                                style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                                label={"Name of Parent/Guardian"}
                             >
-                               {specimenData.name_of_parent}
-                            </EuiFlexItem>
-                        </EuiFormRow>
-                        <EuiFormRow
-                            fullWidth
-                            style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                            label={"Number and Street"}
-                        >
-                            <EuiFlexItem
-                                style={{
-                                    marginTop: "5px",
-                                    gap: "5px",
-                                    fontWeight: "normal"
-                                }}
-                            >
-                               {specimenData.number_and_street}
-                            </EuiFlexItem>
-                        </EuiFormRow>
-                        <EuiFormRow
-                            fullWidth
-                            style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                            label={"Barangay/City"}
-                        >
-                            <EuiFlexItem
-                                style={{
-                                    marginTop: "5px",
-                                    gap: "5px",
-                                    fontWeight: "normal"
-                                }}
-                            >
-                               {specimenData.barangay_or_city}
-                            </EuiFlexItem>
-                        </EuiFormRow>
-                        <EuiFormRow
-                            fullWidth
-                            style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                            label={"Province"}
-                        >
-                            <EuiFlexItem
-                                style={{
-                                    marginTop: "5px",
-                                    gap: "5px",
-                                    fontWeight: "normal"
-                                }}
-                            >
-                                {specimenData.province}
-                            </EuiFlexItem>
-                        </EuiFormRow>
-                        <EuiFormRow
-                            fullWidth
-                            style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                            label={"Zip Code"}
-                        >
-                            <EuiFlexItem
-                                style={{
-                                    marginTop: "5px",
-                                    gap: "5px",
-                                    fontWeight: "normal"
-                                }}
-                            >
-                                {specimenData.zip_code}
-                            </EuiFlexItem>
-                        </EuiFormRow>
-                        <EuiFormRow
-                            fullWidth
-                            style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                            label={"Contact Number of Parent/Guardian"}
-                        >
-                            <EuiFlexItem
-                                style={{
-                                    marginTop: "5px",
-                                    gap: "5px",
-                                    fontWeight: "normal"
-                                }}
-                            >
-                                {specimenData.contact_number_of_parent}
-                            </EuiFlexItem>
-                        </EuiFormRow>
-                        <EuiFormRow
-                            fullWidth
-                            style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                            label={"Additional Contact Number of Parent/Guardian"}
-                        >
-                            <EuiFlexItem
-                                style={{
-                                    marginTop: "5px",
-                                    gap: "5px",
-                                    fontWeight: "normal"
-                                }}
-                            >
-                                {specimenData.additional_contact_number}
-                            </EuiFlexItem>
-                        </EuiFormRow>
+                                    <EuiFlexItem
+                                        style={{
+                                            marginTop: "5px",
+                                            gap: "5px",
+                                            fontWeight: "normal"
+                                        }}
+                                    >
+                                        {specimenData?.name_of_parent}
+                                    </EuiFlexItem>
+                                </EuiFormRow><EuiFormRow
+                                    fullWidth
+                                    style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                                    label={"Number and Street"}
+                                >
+                                    <EuiFlexItem
+                                        style={{
+                                            marginTop: "5px",
+                                            gap: "5px",
+                                            fontWeight: "normal"
+                                        }}
+                                    >
+                                        {specimenData?.number_and_street}
+                                    </EuiFlexItem>
+                                </EuiFormRow><EuiFormRow
+                                    fullWidth
+                                    style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                                    label={"Barangay/City"}
+                                >
+                                    <EuiFlexItem
+                                        style={{
+                                            marginTop: "5px",
+                                            gap: "5px",
+                                            fontWeight: "normal"
+                                        }}
+                                    >
+                                        {specimenData?.barangay_or_city}
+                                    </EuiFlexItem>
+                                </EuiFormRow><EuiFormRow
+                                    fullWidth
+                                    style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                                    label={"Province"}
+                                >
+                                    <EuiFlexItem
+                                        style={{
+                                            marginTop: "5px",
+                                            gap: "5px",
+                                            fontWeight: "normal"
+                                        }}
+                                    >
+                                        {specimenData?.province}
+                                    </EuiFlexItem>
+                                </EuiFormRow><EuiFormRow
+                                    fullWidth
+                                    style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                                    label={"Zip Code"}
+                                >
+                                    <EuiFlexItem
+                                        style={{
+                                            marginTop: "5px",
+                                            gap: "5px",
+                                            fontWeight: "normal"
+                                        }}
+                                    >
+                                        {specimenData?.zip_code}
+                                    </EuiFlexItem>
+                                </EuiFormRow><EuiFormRow
+                                    fullWidth
+                                    style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                                    label={"Contact Number of Parent/Guardian"}
+                                >
+                                    <EuiFlexItem
+                                        style={{
+                                            marginTop: "5px",
+                                            gap: "5px",
+                                            fontWeight: "normal"
+                                        }}
+                                    >
+                                        {specimenData?.contact_number_of_parent}
+                                    </EuiFlexItem>
+                                </EuiFormRow><EuiFormRow
+                                    fullWidth
+                                    style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                                    label={"Additional Contact Number of Parent/Guardian"}
+                                >
+                                    <EuiFlexItem
+                                        style={{
+                                            marginTop: "5px",
+                                            gap: "5px",
+                                            fontWeight: "normal"
+                                        }}
+                                    >
+                                        {specimenData?.additional_contact_number}
+                                    </EuiFlexItem>
+                                </EuiFormRow>
+                            </>
+                        )}
+                    
                     </EuiFlexGroup>
                     <div
                         style={{
@@ -473,7 +513,9 @@ const SpecimenReview = () => {
                             }}
                             fullWidth
                             onClick={() => {
-                                navigate("/add-specimen/specimen-form");
+                                createSpecimen ? 
+                                navigate("/add-specimen/specimen-form") :
+                                navigate("/add-specimen/repeat-form");
                             }}
                         >
                             <p
@@ -493,7 +535,7 @@ const SpecimenReview = () => {
                                 border: "0px",
                             }}
                             fullWidth
-                            onClick={submitSepcimen}
+                            onClick={createSpecimen ? submitSepcimen : updateSpecimen}
 
                         >
                             <p
@@ -506,7 +548,7 @@ const SpecimenReview = () => {
                         </EuiButton>
                     </div>
                 </div>
-            </div>
+            </div>     
         </div>
     )
 };

@@ -38,9 +38,7 @@ const CourierSample = () => {
             http
                 .get(`v1/specimens/refresh-samples`)
                 .then((res) => {
-                    
                     setSpecimenLoad(true);
-                   
                     return res?.data;
                 })
     })
@@ -55,8 +53,6 @@ const CourierSample = () => {
                 .get(`v1/specimens/show-couriers`)
                 .then((res) => {
                     setSpecimenLoad(true);
-
-                    // console.log(res?.data);
                     setCourierData(res?.data);
                     return res?.data;
                 })
@@ -95,49 +91,61 @@ const CourierSample = () => {
                     <div className="home-container">
                         <EuiFlexGroup style={{ gap: "20px", marginBottom: "20px" }}>
                             <EuiFlexItem>
-
-                                <div className="flex-row" style={{ display:"flex", gap:"30px" }}>
+                                <div className="flex-row">
                                     {filteredCourier.map((c, index) => {
                                          const courierTrackingNumber = `${c.courier}-${c.tracking_number}`;
                                         return (
-                                            <div className='flex-col'>                                            
-                                                <div style={{ textAlign: "left" }}>
-                                                    <h4 style={{ alignSelf: "self-start" }}>{courierTrackingNumber}</h4>
-                                                </div>
-                                                <div className='flex-row'>
-                                                    <div className="flex-col" style={{ display: "flex", flexWrap: "wrap" }}>
-                                                        <span style={{ fontSize: "14px" }}>Date of Pickup</span>
-                                                        <EuiText style={{ fontSize: "15px" }}>{dateOfPickup}</EuiText>
+                                            <div className='flex-col' style={{ marginLeft: "15px" }}>
+                                                <div>
+                                                    <div style={{ textAlign: "left" }}>
+                                                        <h3 style={{ alignSelf: "self-start" }}>{courierTrackingNumber}</h3>
                                                     </div>
-                                                    <div className="flex-col" style={{ paddingLeft: "20px" }}>
-                                                        <span style={{ fontSize: "14px" }}>Samples</span>
-                                                        <EuiText style={{ fontSize: "15px" }}>{refreshSamples?.samples.length}</EuiText>
+                                                    <div className='flex-row' style={{ gap: "25px" }}>
+                                                        <div className="flex-col" style={{ display: "flex", whiteSpace: "nowrap" }}>
+                                                            <span style={{ fontSize: "16px" }}>Date of Pickup</span>
+                                                            <EuiText size='s' style={{ fontSize: "15px" }}>{dateOfPickup}</EuiText>
+                                                        </div>
+                                                        <div className="flex-col" style={{ paddingLeft: "20px" }}>
+                                                            <span style={{ fontSize: "16px" }}>Samples</span>
+                                                            <EuiText size='s' style={{ fontSize: "15px" }}>{refreshSamples?.samples?.length}</EuiText>
+                                                        </div>
+                                                        <div className="flex-col">
+                                                            <span style={{ fontSize: "16px" }}>Status</span>
+                                                            <EuiText size='s' style={{ fontSize: "15px" }}>{c.result}</EuiText>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex-col">
-                                                        <span style={{ fontSize: "14px" }}>Status</span>
-                                                        <EuiText style={{ fontSize: "15px" }}>{c.result}</EuiText>
-                                                    </div>
-                                                </div>                                              
+                                                    <div style={{ textAlign: "left", marginTop: "5px" }}>
+                                                        <span style={{ fontSize: "16px" }}>Notes</span>
+                                                        <EuiText size='s' style={{ alignSelf: "self-start" }}>{c.notes}</EuiText>
+                                                    </div>    
+                                                </div>                                                                              
                                             </div>
                                         )
                                     })}
                                 </div>
                             </EuiFlexItem>
-                            <EuiFlexItem style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px"}}>
+                            <EuiFlexItem style={{ display: "flex", justifyContent: "center", alignItems: "center", gap:"10px"}}>
                                 {refreshSamples?.samples?.map((sample, index) => {
                                      const dateOfBirth = new Date(sample.date_and_time_of_birth);
                                      const formattedDate = format(dateOfBirth, "MMMM dd, yyyy");
-                                    const mother = `${sample.baby_last_name}, ${sample.mothers_first_name}`;
+                                     const mother = `${sample.baby_last_name}, ${sample.mothers_first_name}`;
                                     return (
                                         <EuiCard
-                                            style={{ width: '85%' }}
                                             key={index}
-                                            textAlign="left"
+                                            style={{ 
+                                                width: '85%',
+                                                height: '105px',
+                                                backgroundColor: "#fff",
+                                                border: '1px solid rgba(0, 0, 0, 0.1)',
+                                                boxShadow: '0px 4px 8px -6px rgba(0, 0, 0, 0.8)',
+                                            }}
                                         >
-                                            <h4>{mother}</h4>
-                                            <div className="flex-row" style={{ display:"flex", gap:"30px" }}>
-                                                <div className="flex-col" style={{display:"flex", flexWrap: "wrap" }}>
-                                                    <span style={{ fontSize: "14px" }}>Birthday</span>
+                                            <div style={{ textAlign: "left", marginTop: "-17px" }}>
+                                                <h4 style={{ alignSelf: "self-start" }}>{mother}</h4>
+                                            </div>
+                                            <div className="flex-row" style={{ display:"flex" }}>
+                                                <div className="flex-col" style={{display:"flex", whiteSpace: "nowrap" }}>
+                                                    <span style={{ fontSize: "14px", alignSelf: "self-start" }}>Birthday</span>
                                                     <EuiText style={{ fontSize: "15px" }}>{formattedDate}</EuiText>
                                                 </div>
                                                 <div className="flex-col" style={{ paddingLeft: "20px" }}>
@@ -145,10 +153,10 @@ const CourierSample = () => {
                                                     <EuiText style={{ fontSize: "15px" }}>{sample.sex}</EuiText>
                                                 </div>
                                                 <div className="flex-col">
-                                                    <span style={{ fontSize: "14px" }}>Specimen Status</span>
-                                                    <EuiText style={{ fontSize: "15px" }}>{sample.specimen_status}</EuiText>
+                                                    <span style={{ fontSize: "14px", whiteSpace: "nowrap" }}>Specimen Status</span>
+                                                    <EuiText style={{ fontSize: "15px", alignSelf: "self-start" }}>{sample.specimen_status}</EuiText>
                                                 </div>
-                                            </div>
+                                            </div> 
                                         </EuiCard>
                                     )
                                 })}

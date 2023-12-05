@@ -3,6 +3,8 @@ const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const [data, setData] = useState([]);
+  const [createSpecimen, setCreateSpecimen] = useState(false);
+  const [feedingValues, setFeedingValues] = useState([]);
  
   const initialSpecimenState = {
     type_of_sample: '',
@@ -57,6 +59,10 @@ export const DataProvider = ({ children }) => {
         setData, 
         specimenData,
         dispatch,
+        feedingValues,
+        setFeedingValues,
+        createSpecimen,
+        setCreateSpecimen
       }}
     >
       {children}

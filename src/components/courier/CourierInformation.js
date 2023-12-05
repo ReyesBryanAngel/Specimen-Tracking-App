@@ -44,10 +44,6 @@ const CourierInformation = () => {
         }
     })
         
-    // useEffect(() => {
-    //     console.log(specimenData);
-    // })
-
     const saveCourierInformation = (values) => {
         http.post('/v1/specimens/courier-information', values)
         .then((res) => {

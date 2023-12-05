@@ -1,475 +1,480 @@
 import React, {useState} from 'react'
 import {
     EuiButton,
-    EuiCheckbox,
     EuiFieldText,
     EuiFlexGroup,
     EuiFlexItem,
     EuiFormRow,
     EuiRadio,
-    EuiText,
+    EuiProvider,
+    EuiDatePicker
   } from "@elastic/eui";
+  import { useNavigate } from "react-router-dom";
+  import { useQuery } from "@tanstack/react-query";
   import { useData } from '../../context/DataProvider';
+  import ApiCall from '../../util/authentication/ApiCall';
+  import  { SpecimenFormik } from "../../components/formikData";
+  import moment from 'moment';
 
 const RepeatForm = () => {
-    const [type, setType] = useState(null);
-    const { data } = useData();
+    const navigate = useNavigate();
+    const { specimenData, dispatch, createSpecimen } = useData();
+   
+    const [startDate, setStartDate] = useState(moment());
+    const [specimenLoad, setSpecimenLoad] = useState(false);
+    const { http } = ApiCall();
 
-    const nameArray = data.name.split(" ");
-    const firstName = nameArray.slice(0, nameArray.length - 1).join(" ");
-    const lastName = nameArray.pop();
+    
+    const { data: refreshSpecimen, isLoading: refreshSpecimenLoading } = useQuery({
+        queryKey: ["sample"],
+        enabled: !specimenLoad,
+        retryDelay: 500,
+        refetchOnWindowFocus: false,
+        queryFn: () =>
+            http
+                .get(`v1/specimens/refresh-specimen`)
+                .then((res) => {
+                    setSpecimenLoad(true);
+                    return res?.data;
+                })
+    })
 
-    const onChange = (optionId) => {
-      setType(optionId);
-    };
+    const specimenForm = SpecimenFormik(specimenData, dispatch, navigate, createSpecimen, refreshSpecimen, refreshSpecimen);
+
+    const handleCheckboxOther = (column) => {
+        const columnNames = ["doctor", "midwife", "nurse"].includes(column);
+    
+        if (columnNames) {
+          specimenForm.setFieldValue("practitioner_profession_other", "");  
+        }
+    
+        specimenForm.setFieldValue("practitioner_profession", column);
+      }
+
+    const handleDateOfCollection = (date) => {
+        setStartDate(date);
+        const formatDateOfCollection = date.format("YYYY-MM-DD HH:mm:ss");
+        specimenForm.setFieldValue("date_and_time_of_collection", formatDateOfCollection);
+    }
+
+    const saveData = (values) => {
+        if (!createSpecimen) {
+            dispatch({ type: 'UPDATE', payload: values });
+            navigate("/add-specimen/specimen-review");
+        }
+    }
+
     return (
-        <div className="main-content">
-            <div className="specimen-form-container">
+        <form>
+          <div className="main-content">
+            {!refreshSpecimenLoading && refreshSpecimen ? (
+                <div className="specimen-form-container">
+                <EuiProvider>
                 <EuiFlexGroup style={{ gap: "20px", marginBottom: "20px" }}>
-                    <EuiFlexItem className="specimen-form-title-container">
+                  <EuiFlexItem>
                     <h4
-                        style={{
+                      style={{
                         marginTop: "0",
                         marginBottom: "0",
                         fontSize: "20px",
-                        }}
+                      }}
                     >
-                        <>Specimen Form (Repeat)</>
+                      Specimen Form Repeat
                     </h4>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                        <EuiFormRow
-                            fullWidth
-                            style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                            label={"Baby’s Last Name"}
-                        >
-                            <EuiText size="s">{lastName}</EuiText>
-                        </EuiFormRow>
-                    </EuiFlexItem>
-                   
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Baby’s First Name (Optional)"}
-                    >
-                        <EuiText size="s">{firstName}</EuiText>
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"For Multiple Births"}
-                    >
-                        <select
-                        id="multipleBirths"
-                        name="multipleBirths"
-                        style={{
-                            width: "97%",
-                            border: "1px solid #D3D3D3",
-                            borderRadius: "4px",
-                            height: "35px",
-                        }}
-                        >
-                        <option value="option_one">Option one</option>
-                        <option value="option_two">Option two</option>
-                        </select>
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Mother's First Name"}
-                    >
-                        <EuiFieldText
-                        id="motherFirstName"
-                        name="motherFirstName"
-                        placeholder="Input"
-                        style={{
-                            width: "95%",
-                            border: "1px solid #D3D3D3",
-                            borderRadius: "4px",
-                            height: "32px",
-                        }}
-                        />
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Date of Birth"}
-                    >
-                        <input
-                        type="datetime-local"
-                        id="dateOfBirth"
-                        name="dateOfBirth"
-                        style={{
-                            width: "95%",
-                            border: "1px solid #D3D3D3",
-                            borderRadius: "4px",
-                            height: "32px",
-                        }}
-                        />
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Sex"}
-                    >
-                        <EuiFlexItem
+                  </EuiFlexItem>
+                  
+                   <EuiFormRow
+                    fullWidth
+                    style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                    label={"Baby's Last Name"}
+                   >
+                    <EuiFlexItem
                         style={{
                             marginTop: "5px",
                             gap: "5px",
+                            fontWeight: "normal"
                         }}
-                        >
-                        <EuiRadio
-                            onChange={onChange}
-                            name="radio group"
-                            label="Male"
-                            value="male"
-                            style={{
-                            width: "95%",
-                            display: "flex",
-                            fontWeight: "normal",
-                            }}
-                        />
-                        <EuiRadio
-                            onChange={onChange}
-                            name="radio group"
-                            label="Female"
-                            value="female"
-                            style={{
-                            width: "95%",
-                            display: "flex",
-                            fontWeight: "normal",
-                            }}
-                        />
-                        <EuiRadio
-                            onChange={onChange}
-                            name="radio group"
-                            label="Ambiguous"
-                            value="ambiguous"
-                            style={{
-                            width: "95%",
-                            display: "flex",
-                            fontWeight: "normal",
-                            }}
-                        />
-                        </EuiFlexItem>
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Baby’s Weight (in Grams)"}
                     >
-                        <EuiFieldText
-                        id="weight"
-                        name="weight"
-                        placeholder="Input"
-                        type="number"
-                        style={{
-                            width: "95%",
-                            border: "1px solid #D3D3D3",
-                            borderRadius: "4px",
-                            height: "32px",
-                        }}
-                        />
-                    </EuiFormRow>
+                        {refreshSpecimen?.samples?.baby_last_name}
                     </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Date and Time of Collection"}
-                    >
-                        <input
-                        type="datetime-local"
-                        id="dateOfCollection"
-                        name="dateOfCollection"
-                        style={{
-                            width: "95%",
-                            border: "1px solid #D3D3D3",
-                            borderRadius: "4px",
-                            height: "32px",
-                        }}
-                        />
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Age of Gestation (in Weeks)"}
-                    >
-                        <EuiFieldText
-                        id="ageOfGestation"
-                        name="ageOfGestation"
-                        placeholder="Input"
-                        type="number"
-                        style={{
-                            width: "95%",
-                            border: "1px solid #D3D3D3",
-                            borderRadius: "4px",
-                            height: "32px",
-                        }}
-                        />
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Specimen"}
-                    >
-                        <EuiFlexItem
+                  </EuiFormRow>
+                  <EuiFormRow
+                    fullWidth
+                    style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                    label={"For Multiple Births"}
+                   >
+                    <EuiFlexItem
                         style={{
                             marginTop: "5px",
                             gap: "5px",
+                            fontWeight: "normal"
                         }}
-                        >
-                        <EuiRadio
-                            onChange={onChange}
-                            name="radio group"
-                            label="Heel"
-                            value="heel"
-                            style={{
-                            width: "95%",
-                            display: "flex",
-                            fontWeight: "normal",
-                            }}
-                        />
-                        <EuiRadio
-                            onChange={onChange}
-                            name="radio group"
-                            label="Cord"
-                            value="cord"
-                            style={{
-                            width: "95%",
-                            display: "flex",
-                            fontWeight: "normal",
-                            }}
-                        />
-                        <EuiRadio
-                            onChange={onChange}
-                            name="radio group"
-                            label="Venous"
-                            value="venous"
-                            style={{
-                            width: "95%",
-                            display: "flex",
-                            fontWeight: "normal",
-                            }}
-                        />
-                        </EuiFlexItem>
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        style={{
-                        fontSize: "12px",
-                        fontWeight: "bold",
-                        width: "100%",
-                        }}
-                        label={"Feeding (Check all that apply)"}
                     >
-                        <EuiFlexItem>
-                        <EuiFlexItem grow={false}>
-                            <EuiCheckbox
-                            onChange={onChange}
-                            label="Breast"
-                            value="breast"
-                            />
-                        </EuiFlexItem>
-                        <EuiFlexItem grow={false}>
-                            <EuiCheckbox
-                            onChange={onChange}
-                            label="Lactose Formula"
-                            value="lactoseFormula"
-                            />
-                        </EuiFlexItem>
-                        <EuiFlexItem grow={false}>
-                            <EuiCheckbox
-                            onChange={onChange}
-                            label="Soy/Lactose-Free"
-                            value="lactoseFree"
-                            />
-                        </EuiFlexItem>
-                        <EuiFlexItem grow={false}>
-                            <EuiCheckbox onChange={onChange} label="NPO" value="npo" />
-                        </EuiFlexItem>
-                        <EuiFlexItem grow={false}>
-                            <EuiCheckbox onChange={onChange} label="TPN" value="tpn" />
-                        </EuiFlexItem>
-                        </EuiFlexItem>
-                    </EuiFormRow>
+                        {refreshSpecimen?.samples?.for_multiple_births}
                     </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Hospital/Place of Collection"}
-                    >
-                        <EuiFieldText
-                        id="placeOfCollection"
-                        name="placeOfCollection"
-                        placeholder="Input"
-                        style={{
-                            width: "95%",
-                            border: "1px solid #D3D3D3",
-                            borderRadius: "4px",
-                            height: "32px",
-                        }}
-                        />
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Hospital/Place of Birth"}
-                    >
-                        <EuiFieldText
-                        id="placeOfBirth"
-                        name="placeOfBirth"
-                        placeholder="Input"
-                        style={{
-                            width: "95%",
-                            border: "1px solid #D3D3D3",
-                            borderRadius: "4px",
-                            height: "32px",
-                        }}
-                        />
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Attending Practitioner (Last Name, First Name)"}
-                    >
-                        <EuiFieldText
-                        id="attendPractitioner"
-                        name="attendPractitioner"
-                        placeholder="Input"
-                        style={{
-                            width: "95%",
-                            border: "1px solid #D3D3D3",
-                            borderRadius: "4px",
-                            height: "32px",
-                        }}
-                        />
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Practitioner"}
-                    >
-                        <EuiFlexItem
+                  </EuiFormRow>
+                  <EuiFormRow
+                    fullWidth
+                    style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                    label={"Mother's First Name"}
+                   >
+                    <EuiFlexItem
                         style={{
                             marginTop: "5px",
                             gap: "5px",
+                            fontWeight: "normal"
                         }}
-                        >
-                        <EuiRadio
-                            onChange={onChange}
-                            name="radio group"
-                            label="Doctor"
-                            value="doctor"
-                            style={{
-                            width: "95%",
-                            display: "flex",
-                            fontWeight: "normal",
-                            }}
-                        />
-                        <EuiRadio
-                            onChange={onChange}
-                            name="radio group"
-                            label="Nurse"
-                            value="nurse"
-                            style={{
-                            width: "95%",
-                            display: "flex",
-                            fontWeight: "normal",
-                            }}
-                        />
-                        <EuiRadio
-                            onChange={onChange}
-                            name="radio group"
-                            label="Midwife"
-                            value="midwife"
-                            style={{
-                            width: "95%",
-                            display: "flex",
-                            fontWeight: "normal",
-                            }}
-                        />
-                        <EuiRadio
-                            onChange={onChange}
-                            name="radio group"
-                            label="Other_____"
-                            value="other"
-                            style={{
-                            width: "95%",
-                            display: "flex",
-                            fontWeight: "normal",
-                            }}
-                        />
-                        </EuiFlexItem>
-                    </EuiFormRow>
-                    </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Practitioner’s Day Contact Number"}
                     >
-                        <EuiFieldText
-                        id="practitionerDayContactNumber"
-                        name="practitionerDayContactNumber"
-                        placeholder="Input"
-                        type="number"
-                        style={{
-                            width: "95%",
-                            border: "1px solid #D3D3D3",
-                            borderRadius: "4px",
-                            height: "32px",
-                        }}
-                        />
-                    </EuiFormRow>
+                        {refreshSpecimen?.samples?.mothers_first_name}
                     </EuiFlexItem>
-                    <EuiFlexItem>
-                    <EuiFormRow
-                        fullWidth
-                        style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
-                        label={"Practitioner’s Mobile Number"}
+                  </EuiFormRow>
+                  <EuiFormRow
+                    fullWidth
+                    style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                    label={"Date of Birth"}
+                   >
+                    <EuiFlexItem
+                        style={{
+                            marginTop: "5px",
+                            gap: "5px",
+                            fontWeight: "normal"
+                        }}
                     >
-                        <EuiFieldText
-                        id="practitionerMobileNumber"
-                        name="practitionerMobileNumber"
-                        placeholder="Input"
-                        type="number"
-                        style={{
-                            width: "95%",
-                            border: "1px solid #D3D3D3",
-                            borderRadius: "4px",
-                            height: "32px",
-                        }}
-                        />
-                    </EuiFormRow>
+                        {refreshSpecimen?.samples?.date_and_time_of_birth}
                     </EuiFlexItem>
+                  </EuiFormRow>
+                  <EuiFormRow
+                    fullWidth
+                    style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                    label={"Sex"}
+                   >
+                    <EuiFlexItem
+                        style={{
+                            marginTop: "5px",
+                            gap: "5px",
+                            fontWeight: "normal"
+                        }}
+                    >
+                        {refreshSpecimen?.samples?.sex}
+                    </EuiFlexItem>
+                  </EuiFormRow>
+                  <EuiFlexItem>
+                    <EuiFormRow label="Date and Time of Collection">
+                      <EuiDatePicker
+                        placeholder="YYYY-MM-DD HH:mm:ss"
+                        showTimeSelect
+                        shouldCloseOnSelect
+                        selected={startDate}
+                        onChange={handleDateOfCollection}
+                        handleBlur={specimenForm.handleBlur}
+                      />
+                    </EuiFormRow>
+                    {specimenForm.touched.date_and_time_of_collection && specimenForm.errors.date_and_time_of_collection ? (
+                        <div style={{ color:"#BD271E" }}>{specimenForm.errors.date_and_time_of_collection}</div>
+                      ) : null}
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiFormRow
+                      fullWidth
+                      style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                      label={"Specimen"}
+                    >
+                      <EuiFlexItem
+                        style={{
+                          marginTop: "5px",
+                          gap: "5px",
+                        }}
+                      >
+                        <EuiRadio
+                          label="Heel"
+                          id="Heel"
+                          name="specimens"         
+                          checked={specimenForm.values.specimens === "heel"}
+                          onChange={() => specimenForm.setFieldValue('specimens', "heel")}
+                          style={{
+                            
+                            display: "flex",
+                            fontWeight: "normal",
+                          }}
+                        />
+                        <EuiRadio
+                          label="Cord"
+                          id="Cord"
+                          name="specimens"         
+                          checked={specimenForm.values.specimens === "cord"}
+                          onChange={() => specimenForm.setFieldValue('specimens', "cord")}
+                          style={{
+                            
+                            display: "flex",
+                            fontWeight: "normal",
+                          }}
+                        />
+                        <EuiRadio
+                          label="Venous"
+                          id="Venous"
+                          name="specimens"         
+                          checked={specimenForm.values.specimens === "venous"}
+                          onChange={() => specimenForm.setFieldValue('specimens', "venous")}
+                          style={{
+                            
+                            display: "flex",
+                            fontWeight: "normal",
+                          }}
+                        />
+                      </EuiFlexItem>
+                    </EuiFormRow>
+                    {specimenForm.touched.specimens && specimenForm.errors.specimens ? (
+                        <div style={{ color:"#BD271E" }}>{specimenForm.errors.specimens}</div>
+                      ) : null}
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiFormRow
+                      fullWidth
+                      style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                      label={"Hospital/Place of Collection"}
+                    >
+                      <EuiFieldText
+                         id="place_of_collection"
+                         name="place_of_collection"
+                         placeholder="Input"
+                         value={specimenForm.values.place_of_collection}
+                         onBlur={specimenForm.handleBlur}
+                         onChange={specimenForm.handleChange}
+                        style={{
+                          
+                          border: "1px solid #D3D3D3",
+                          borderRadius: "4px",
+                          height: "32px",
+                        }}
+                      />
+                    </EuiFormRow>
+                    {specimenForm.touched.place_of_collection && specimenForm.errors.place_of_collection ? (
+                        <div style={{ color:"#BD271E" }}>{specimenForm.errors.place_of_collection}</div>
+                      ) : null}
+                  </EuiFlexItem>
+                  
+                  <EuiFlexItem>
+                    <EuiFormRow
+                      fullWidth
+                      style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                      label={"Attending Practitioner (Last Name, First Name)"}
+                    >
+                      <EuiFieldText
+                         id="attending_practitioner"
+                         name="attending_practitioner"
+                         placeholder="Input"
+                         value={specimenForm.values.attending_practitioner}
+                         onBlur={specimenForm.handleBlur}
+                         onChange={specimenForm.handleChange}
+                        style={{
+                          
+                          border: "1px solid #D3D3D3",
+                          borderRadius: "4px",
+                          height: "32px",
+                        }}
+                      />
+                    </EuiFormRow>
+                    {specimenForm.touched.attending_practitioner && specimenForm.errors.attending_practitioner ? (
+                        <div style={{ color:"#BD271E" }}>{specimenForm.errors.attending_practitioner}</div>
+                      ) : null}
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiFormRow
+                      fullWidth
+                      style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                      label={"Practitioner"}
+                    >
+                      <EuiFlexItem
+                        style={{
+                          marginTop: "5px",
+                          gap: "5px",
+                        }}
+                      >
+                        <EuiRadio
+                          label="Doctor"
+                          id="Doctor"
+                          name="practitioner_profession"         
+                          checked={specimenForm.values.practitioner_profession === "doctor"}
+                          onChange={() => handleCheckboxOther("doctor")}
+                          style={{
+                            
+                            display: "flex",
+                            fontWeight: "normal",
+                          }}
+                        />
+                        <EuiRadio
+                          label="Nurse"
+                          id="Nurse"
+                          name="practitioner_profession"         
+                          checked={specimenForm.values.practitioner_profession === "nurse"}
+                          onChange={() => handleCheckboxOther("nurse")}
+                          style={{
+                            
+                            display: "flex",
+                            fontWeight: "normal",
+                          }}
+                        />
+                        <EuiRadio
+                          label="Midwife"
+                          id="Midwife"
+                          name="practitioner_profession"         
+                          checked={specimenForm.values.practitioner_profession === "midwife"}
+                          onChange={() => handleCheckboxOther("midwife")}
+                          style={{
+                            
+                            display: "flex",
+                            fontWeight: "normal",
+                          }}
+                        />
+                        <div style={{ display: "flex" }}>
+                          <EuiRadio
+                          label="Other"
+                          id="Other"
+                          name="practitioner_profession"
+                          checked={specimenForm.values.practitioner_profession === "other"}
+                          onChange={() => handleCheckboxOther("other")}
+                            style={{
+                              
+                              display: "flex",
+                              fontWeight: "normal",
+                            }}
+                          />
+                          <EuiFieldText
+                            id="practitioner_profession_other"
+                            name="practitioner_profession_other"
+                            disabled={specimenForm.values.practitioner_profession !== "other"}
+                            value={specimenForm.values.practitioner_profession_other}
+                            onBlur={specimenForm.handleBlur}
+                            onChange={specimenForm.handleChange}
+                            style={{
+                              border: 'none !important',
+                              borderBottom: "1px solid",
+                              height: "32px",
+                            }}
+                          />
+                        </div>
+                      </EuiFlexItem>
+                    </EuiFormRow>
+                    {specimenForm.touched.practitioner_profession && specimenForm.errors.practitioner_profession ? (
+                      <div style={{ color:"#BD271E" }}>{specimenForm.errors.practitioner_profession}</div>
+                    ) : null}
+                    {specimenForm.touched.practitioner_profession_other && 
+                    specimenForm.errors.practitioner_profession_other ? (
+                        <div style={{ color:"#BD271E" }}>{specimenForm.errors.practitioner_profession_other}</div>
+                      ) : null}
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiFormRow
+                      fullWidth
+                      style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                      label={"Practitioner’s Day Contact Number"}
+                    >
+                      <EuiFieldText
+                        id="practitioners_day_contact_number"
+                        name="practitioners_day_contact_number"
+                        placeholder="Input"
+                        value={specimenForm.values.practitioners_day_contact_number}
+                        onBlur={specimenForm.handleBlur}
+                        onChange={specimenForm.handleChange}
+                        helperText
+                        style={{
+                          
+                          border: "1px solid #D3D3D3",
+                          borderRadius: "4px",
+                          height: "32px",
+                        }}
+                      />
+                    </EuiFormRow>
+                    {specimenForm.touched.practitioners_day_contact_number && specimenForm.errors.practitioners_day_contact_number ? (
+                      <div style={{ color:"#BD271E" }}>{specimenForm.errors.practitioners_day_contact_number}</div>
+                    ) : null}
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiFormRow
+                      fullWidth
+                      style={{ fontSize: "12px", fontWeight: "bold", width: "100%" }}
+                      label={"Practitioner’s Mobile Number"}
+                    >
+                      <EuiFieldText
+                        id="practitioners_mobile_number"
+                        name="practitioners_mobile_number"
+                        placeholder="Input"
+                        value={specimenForm.values.practitioners_mobile_number}
+                        onBlur={specimenForm.handleBlur}
+                        onChange={specimenForm.handleChange}
+                        style={{
+                          
+                          border: "1px solid #D3D3D3",
+                          borderRadius: "4px",
+                          height: "32px",
+                        }}
+                      />
+                    </EuiFormRow>
+                    {specimenForm.touched.practitioners_mobile_number && specimenForm.errors.practitioners_mobile_number ? (
+                      <div style={{ color:"#BD271E" }}>{specimenForm.errors.practitioners_mobile_number}</div>
+                    ) : null}
+                  </EuiFlexItem>
                 </EuiFlexGroup>
+                </EuiProvider>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    paddingTop: "20px",
+                    borderTop: "1px solid #D3D3D3",
+                    width: "100%",
+                  }}
+                >
+                  <EuiButton
+                    style={{
+                      borderRadius: "2.813px",
+                      fontSize: "8px",
+                      color: "#000000",
+                      backgroundColor: "#69707D33",
+                      border: "0px",
+                    }}
+                    fullWidth
+                    onClick={() => {
+                      navigate("/add-specimen");
+                    }}
+                  >
+                    <p
+                      style={{
+                        fontSize: "14px",
+                      }}
+                    >
+                      Back
+                    </p>
+                  </EuiButton>
+                  <EuiButton
+                    onClick={() => {
+                        saveData(specimenForm?.values)
+                    }}
+                    // type="submit"
+                    style={{
+                      borderRadius: "2.813px",
+                      fontSize: "8px",
+                      color: "#FFFFFF",
+                      backgroundColor: "#01B5AC",
+                      border: "0px",
+                    }}
+                    fullWidth
+                  >
+                    <p
+                      style={{
+                        fontSize: "14px",
+                      }}
+                    >
+                      Review
+                    </p>
+                  </EuiButton>
+                </div>
+    
             </div>
-        </div>
-    )
+            ) : <div>Loading...</div>}
+          </div>
+        </form>
+      );
 }
 
 export default RepeatForm;

@@ -1,19 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {
     EuiFlexGroup,
     EuiFlexItem,
-    EuiCard,
     EuiText,
     EuiButton,
     EuiPopover,
     EuiButtonEmpty,
     EuiListGroup,
+    EuiImage
 } from "@elastic/eui";
 import courier from '../../config/courier';
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import ApiCall from '../../util/authentication/ApiCall';
 import { useData } from '../../context/DataProvider';
+import emptyCourier from '../../util/images/no_couriers.png';
 
 
 const Courier = () => {
@@ -82,7 +83,7 @@ const Courier = () => {
                     setSpecimenLoad(true);
 
                     const pendingSamples = res?.data?.filter((patient) => patient.specimen_status === "Pending");
-                    const sentSamples = res?.data?.filter((patient) => patient.specimen_status === "Sent");
+                    const sentSamples = res?.data?.filter((patient) => patient.specimen_status === "In Transit");
                     setPendingSpecimens(pendingSamples);
                     setSentSpecimens(sentSamples);
                     return res?.data;
@@ -115,100 +116,116 @@ const Courier = () => {
     }
 
     const returnJsx  = !allSampleLoading && allSamples && !courierLoading && couriers
+    const conditionalClassName = allSamples?.length > 0 ? "main-content" : "login-content"
     return (
-        <div className="main-content">
+        <div className={conditionalClassName}>
+            {couriers?.length === 0 && (
+                <div style={{ display: "flex", flexDirection: "column", alignItems:"center", textAlign:"center" }}>
+                    <div>
+                        <EuiImage
+                            size="l"
+                            src={emptyCourier}
+                        />
+                    </div>
+                    <div>
+                        <EuiText size='m' style={{ fontSize:"20px", fontWeight:"500" }}>You have no Courier Batches</EuiText>
+                        <EuiText size='s'>Fill up a Specimen Form to add Patients to send via Courier.</EuiText>
+                    </div>     
+                </div>
+            )}
             {returnJsx ? (
                 <div className="home-container">
                     <EuiFlexGroup style={{ gap: "20px", marginBottom: "20px" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginLeft: "20px", marginTop: "20px"}}>
-                            <div>
-                                <h5
-                                    style={{
-                                    marginTop: "0",
-                                    marginBottom: "0",
-                                    fontSize: "20px"
-                                    }}
-                                >
-                                Courier
-                                </h5>
-                            </div>
-                            <div style={{ marginTop: "50px"}}>
-                                <div style={{ display: "flex"}}>
-                                    <EuiButtonEmpty
-                                        size="s"
-                                        iconSide="right"
-                                        onClick={sortBySent}
-                                        style={{ textDecoration:"none", color:"black",  backgroundColor: "transparent"}}
+                        {couriers?.length !== 0 && (
+                             <div style={{ display: "flex", justifyContent: "space-between", marginLeft: "20px", marginTop: "20px"}}>
+                                <div>
+                                    <h5
+                                        style={{
+                                        marginTop: "0",
+                                        marginBottom: "0",
+                                        fontSize: "20px"
+                                        }}
                                     >
-                                        Sent
-                                    </EuiButtonEmpty>
-                                    <EuiButtonEmpty
-                                        size="s"                                  
-                                        iconSide="right"
-                                        onClick={sortByReceived}
-                                        style={{ textDecoration:"none", color:"black",  backgroundColor: "transparent"}}
-                                    >
-                                        Received
-                                    </EuiButtonEmpty>
-                                    <EuiPopover
-                                        id="dropdownButtonExample"
-                                        ownFocus
-                                        button={
-                                            <EuiButtonEmpty
-                                                size="s"
-                                                iconType="arrowDown"
-                                                iconSide="right"
-                                                onClick={togglePopover}
-                                                style={{ textDecoration:"none", color:"black",  backgroundColor: "transparent"}}
-                                            >
-                                            Sort by
-                                            </EuiButtonEmpty>
-                                        }
-                                        isOpen={isPopoverOpen}
-                                        closePopover={closePopover}
-                                        panelPaddingSize="none"
-                                    >
-                                    <EuiListGroup
-                                        listItems={items}
-                                        maxWidth="none"
-                                        color="black"
-                                        gutterSize="s"
-                                        className="custom-eui-pagination"
-                                    />
-                                    </EuiPopover>
+                                    Courier
+                                    </h5>
                                 </div>
-                            </div>
-                        </div>
+                                <div style={{ marginTop: "50px"}}>
+                                    <div style={{ display: "flex"}}>
+                                        <EuiButtonEmpty
+                                            size="s"
+                                            iconSide="right"
+                                            onClick={sortBySent}
+                                            style={{ textDecoration:"none", color:"black",  backgroundColor: "transparent"}}
+                                        >
+                                            Sent
+                                        </EuiButtonEmpty>
+                                        <EuiButtonEmpty
+                                            size="s"                                  
+                                            iconSide="right"
+                                            onClick={sortByReceived}
+                                            style={{ textDecoration:"none", color:"black",  backgroundColor: "transparent"}}
+                                        >
+                                            Received
+                                        </EuiButtonEmpty>
+                                        <EuiPopover
+                                            id="dropdownButtonExample"
+                                            ownFocus
+                                            button={
+                                                <EuiButtonEmpty
+                                                    size="s"
+                                                    iconType="arrowDown"
+                                                    iconSide="right"
+                                                    onClick={togglePopover}
+                                                    style={{ textDecoration:"none", color:"black",  backgroundColor: "transparent"}}
+                                                >
+                                                Sort by
+                                                </EuiButtonEmpty>
+                                            }
+                                            isOpen={isPopoverOpen}
+                                            closePopover={closePopover}
+                                            panelPaddingSize="none"
+                                        >
+                                        <EuiListGroup
+                                            listItems={items}
+                                            maxWidth="none"
+                                            color="black"
+                                            gutterSize="s"
+                                            className="custom-eui-pagination"
+                                        />
+                                        </EuiPopover>
+                                    </div>
+                                </div>
+                             </div>
+                        )}
+                       
                         <EuiFlexItem style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px"}}>
                             {couriers.map((c, index) => {
                                 const { format } = require('date-fns');
                                 const dateOfPickup = new Date(c.date_of_pickup);
-                                const formattedDate = format(dateOfPickup, "MMMM dd, yyyy");
-                                
+                                const formattedDate = format(dateOfPickup, "MMMM dd, yyyy");                           
                                 const track = `${c.courier}-${c.tracking_number}`;
                                 const countMatchingSamples = (trackingNumber) => {
                                     return sentSpecimens?.filter(sample => sample.tracking_number === trackingNumber).length;
                                 };
                                 const matchingSampleCount = countMatchingSamples(c.tracking_number);
-                                
-                               
                                 return (
                                     <EuiButton
+                                        key={index}
+                                        textAlign="left"
                                         onClick={() => {
                                             showCourierSample(c.tracking_number)
                                         }}
                                         style={{ 
                                             width: '90%',
-                                            paddingTop: "20px", 
-                                            height: "100%", 
+                                            paddingBottom: "20px", 
+                                            height: '100%', 
                                             backgroundColor: "#fff",
                                             textDecoration:"none",
                                             color: "black",
-                                            border: '1px solid transparent',
-                                            boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.5)',
+                                            border: '1px solid rgba(0, 0, 0, 0.1)',
+                                            boxShadow: '0px 4px 8px -6px rgba(0, 0, 0, 0.8)',
                                         }}
-                                        key={index}
-                                        textAlign="left"
+                                        
                                     >
                                         <div className="flex-col">
                                             <div style={{ textAlign: "left" }}>
@@ -238,11 +255,11 @@ const Courier = () => {
                     </EuiFlexGroup>
                     {pendingSpecimens.length > 0 && (
                         <div
-                            className="bottom-bar"
+                            className="courier-samples-button"
                         >
                             <div>
-                                <h4>You have {pendingSpecimens?.length} unsent samples</h4>
-                            </div>   
+                                <h4 style={{ margin: "0 0 5px 0"}}>You have {pendingSpecimens?.length} unsent samples</h4>
+                            </div>                          
                             <EuiButton
                                 style={{
                                 textDecoration: "none",
@@ -258,11 +275,12 @@ const Courier = () => {
                                 }}
                             >
                                 Send Samples
-                            </EuiButton>
+                            </EuiButton> 
                         </div>
                     )}
                 </div>
-            ) : <div>Loading...</div>}
+                
+            ) : couriers?.length !== 0 && <div>Loading...</div>}
         </div>
     )
 }

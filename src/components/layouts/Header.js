@@ -7,22 +7,37 @@ import {
   EuiHeaderSectionItem,
   EuiIcon,
   EuiSideNav,
-  EuiText,
+  EuiText
 } from "@elastic/eui";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useData } from '../../context/DataProvider';
+import ApiCall from "../../util/authentication/ApiCall";
+import settings from "../../util/images/settings.png"
+import { useQuery } from "@tanstack/react-query";
 
-const Header = ({ backButton }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+const Header = () => {
   const sidebarRef = useRef(null);
   const navigate = useNavigate();
+  const [isSideNavOpenOnMobile, setisSideNavOpenOnMobile] = useState(false);
+  const [specimenLoad, setSpecimenLoad] = useState(false);
+  const [samples, setSamples] = useState([]);
+  const {token, logout, http} = ApiCall();
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+
+  const logoutUser = () => {
+    if(token !== undefined){
+        logout();
+        navigate("/login")
+    }
+  }
+
+  const toggleOpenOnMobile = () => {
+    setisSideNavOpenOnMobile(!isSideNavOpenOnMobile);
   };
 
   const closeSidebar = () => {
-    setIsSidebarOpen(false);
+    setisSideNavOpenOnMobile(false);
   };
 
   useEffect(() => {
@@ -32,7 +47,7 @@ const Header = ({ backButton }) => {
       }
     };
 
-    if (isSidebarOpen) {
+    if (isSideNavOpenOnMobile) {
       document.addEventListener("mousedown", handleOutsideClick);
     } else {
       document.removeEventListener("mousedown", handleOutsideClick);
@@ -41,189 +56,261 @@ const Header = ({ backButton }) => {
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, [isSidebarOpen]);
+  }, [isSideNavOpenOnMobile]);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["specimen"],
+    enabled: !specimenLoad,
+    retryDelay: 500,
+    refetchOnWindowFocus: false,
+    queryFn: () =>
+        http
+          .get(`v1/specimens/all-samples`)
+          .then((res) => {
+              setSpecimenLoad(true);
+              const pendingSample = res?.data?.filter(s => s.specimen_status === "Pending");
+              setSamples(pendingSample);
+              return res?.data;
+        })
+  })
+
 
   const sideNavItems = [
     {
-      name: (
-        <EuiText size="xs">
-          <strong>Newborn Screening Facility</strong>
-        </EuiText>
-      ),
-      id: "newbornScreeningFacility",
-    },
-    {
-      name: "Home",
-      id: "home",
-      icon: (
-        <EuiIcon
-          style={{
-            marginRight: "8px",
-          }}
-          type="home"
-          size="m"
-        />
-      ),
-      onClick: () => {
-        navigate("/");
-        setIsSidebarOpen(false);
-      },
-    },
-    {
-      name: "Dashboard",
-      id: "dashboard",
-      icon: (
-        <EuiIcon
-          style={{
-            marginRight: "8px",
-          }}
-          type="grid"
-          size="m"
-        />
-      ),
-      onClick: () => {
-        navigate("/dashboard");
-        setIsSidebarOpen(false);
-      },
-    },
-    {
-      name: "Patients",
-      id: "patients",
-      icon: (
-        <EuiIcon
-          style={{
-            marginRight: "8px",
-          }}
-          type="users"
-          size="m"
-        />
-      ),
-      onClick: () => {
-        navigate("/patients");
-        setIsSidebarOpen(false);
-      },
-    },
-    {
-      name: "Results",
-      id: "results",
-      icon: (
-        <EuiIcon
-          style={{
-            marginRight: "8px",
-          }}
-          type="userAvatar"
-          size="m"
-        />
-      ),
-      onClick: () => {
-        navigate("/results");
-        setIsSidebarOpen(false);
-      },
-    },
-    {
-      name: "Specimen Form",
-      id: "specimenForm",
-      icon: (
-        <EuiIcon
-          style={{
-            marginRight: "8px",
-          }}
-          type="documentEdit"
-          size="m"
-        />
-      ),
-      onClick: () => {
-        navigate("/add-specimen");
-        setIsSidebarOpen(false);
-      },
-    },
-    {
-      name: "Courier",
-      id: "courier",
-      icon: (
-        <EuiIcon
-          style={{
-            marginRight: "8px",
-          }}
-          type="push"
-          size="m"
-        />
-      ),
-      onClick: () => {
-        navigate("courier");
-        setIsSidebarOpen(false);
-      },
+    
+      items: [
+        {
+          name: (
+            <EuiText size="xs">
+              <strong>Newborn Screening Facility</strong>
+            </EuiText>
+          ),
+          id: "newbornScreeningFacility",
+         
+        },
+        {
+          name: "Home",
+          id: "home",
+          icon: (
+                <EuiIcon
+                style={{
+                  marginRight: "8px",
+                }}
+                type="home"
+                size="m"
+              />
+            
+          ),
+          onClick: () => {
+            navigate("/");
+            setisSideNavOpenOnMobile(false);
+          },
+        },
+        {
+          name: "Dashboard",
+          id: "dashboard",
+          icon: (
+            <EuiIcon
+              style={{
+                marginRight: "8px",
+              }}
+              type="grid"
+              size="m"
+            />
+          ),
+          onClick: () => {
+            navigate("/dashboard");
+            setisSideNavOpenOnMobile(false);
+          },
+        },
+        {
+          name: "Patients",
+          id: "patients",
+          icon: (
+            <EuiIcon
+              style={{
+                marginRight: "8px",
+              }}
+              type="users"
+              size="m"
+            />
+          ),
+          onClick: () => {
+            navigate("/patients");
+            setisSideNavOpenOnMobile(false);
+          },
+        },
+        {
+          name: "Results",
+          id: "results",
+          icon: (
+            <EuiIcon
+              style={{
+                marginRight: "8px",
+              }}
+              type="userAvatar"
+              size="m"
+            />
+          ),
+          onClick: () => {
+            navigate("/results");
+            setisSideNavOpenOnMobile(false);
+          },
+        },
+        {
+          name: "Specimen Form",
+          id: "specimenForm",
+          icon: (
+            <EuiIcon
+              style={{
+                marginRight: "8px",
+              }}
+              type="documentEdit"
+              size="m"
+            />
+          ),
+          onClick: () => {
+            navigate("/add-specimen");
+            setisSideNavOpenOnMobile(false);
+          },
+        },   
+        {
+          id: "courier",
+          icon: (
+            <>
+              <EuiIcon
+                style={{
+                  marginRight: "8px",
+                }}
+                type="push"
+                size="m" 
+              />
+              
+              <EuiText size="m" style={{ fontSize: "17px" }}>Courier</EuiText>
+              {samples?.length > 0 ?
+                <EuiText 
+                style={{ 
+                  fontSize: "16px", 
+                  marginLeft: "10px", 
+                  background:"#01b5ac", 
+                  color: "#fff", 
+                  padding: "4px",
+                  borderRadius: "5px",
+                  width: "17px",
+                  height: "17px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                  }}
+                >
+                  {samples?.length}
+                 </EuiText> : 
+                null }
+              
+            </>
+          ),
+          onClick: () => {
+            navigate("courier");
+            setisSideNavOpenOnMobile(false);
+          },
+        }, 
+        {
+          id: "settingsAndLogout",
+          className: "bottom",
+          icon: (
+            <div className="bottom">
+              <div style={{ display: "flex", alignItems: "center"}} onClick={() => {
+                setisSideNavOpenOnMobile(false);
+              }}>
+                <EuiIcon
+                  style={{
+                    marginRight: "8px",
+                  }}
+                  type={settings}
+                  size="m"
+                />
+                <EuiText>Settings</EuiText>
+              </div>
+              <div style={{ display: "flex", alignItems: "center"}} onClick={() => {
+                navigate("/login");
+                logoutUser()
+                setisSideNavOpenOnMobile(false);
+              }}>
+                <EuiIcon
+                  style={{
+                    marginRight: "8px",
+                  }}
+                  type="exit"
+                  size="m"
+                />
+                <EuiText>Logout</EuiText>
+              </div>
+            </div>
+          )
+        },
+      ],
     },
   ];
 
+
   return (
     <div>
-      {/* Sidebar */}
-      <div
-        className={`sidebar ${isSidebarOpen ? "open" : ""}`}
-        ref={sidebarRef}
-      >
-        <EuiSideNav
+      {!isLoading && data ? (
+        <><div
+          className={`sidebar ${isSideNavOpenOnMobile ? "open" : ""}`}
+          ref={sidebarRef}
+        >
+          <EuiSideNav
+            toggleOpenOnMobile={() => toggleOpenOnMobile()}
+            isOpenOnMobile={isSideNavOpenOnMobile}
+            style={{ width: 248, height: "90vh", display: "flex", flexDirection: "column" }}
+            items={sideNavItems} />
+        </div><EuiHeader
           style={{
-            border: "none",
+            position: "fixed",
+            width: "100%",
+            zIndex: "100",
           }}
-          items={sideNavItems}
-          className="custom-side-nav"
-        />
-      </div>
+        >
+            <EuiHeaderSection>
+              <EuiHeaderSectionItem border="right">
+                <EuiHeaderLink
+                  style={{
+                    border: "none",
+                  }}
+                  onClick={toggleOpenOnMobile}
+                >
+                  <EuiIcon type="menu" size="l" />
+                </EuiHeaderLink>
 
-      {/* Main header */}
-      {/* make header fixed but also take the space of the container */}
-      <EuiHeader
-        style={{
-          position: "fixed",
-          width: "100%",
-          zIndex: "100",
-        }}
-      >
-        <EuiHeaderSection grow={false}>
-          <EuiHeaderSectionItem border="right">
-            {/* Hamburger Icon */}
-            <EuiHeaderLink
-              style={{
-                border: "none",
-              }}
-              onClick={toggleSidebar}
-            >
-              <EuiIcon type="menu" size="l" />
-            </EuiHeaderLink>
+                <a
+                  href="/"
+                  style={{
+                    textDecoration: "none",
+                    fontSize: "24px",
+                    color: "#000000",
+                  }}
+                >
+                  NSF
+                </a>
+              </EuiHeaderSectionItem>
+            </EuiHeaderSection>
 
-            <a
-              href="/"
-              style={{
-                textDecoration: "none",
-                fontSize: "24px",
-                color: "#000000",
-              }}
-            >
-              NSF
-            </a>
-          </EuiHeaderSectionItem>
-        </EuiHeaderSection>
-
-        <EuiHeaderSection>
-          <EuiHeaderLinks>
-            {/* Mail Icon */}
-            <EuiHeaderLink href="#">
-              <EuiIcon type="email" size="m" />
-            </EuiHeaderLink>
-
-            {/* Bell Icon */}
-            <EuiHeaderLink href="#">
-              <EuiIcon type="bell" size="m" />
-            </EuiHeaderLink>
-            <EuiHeaderLink href="#">
-              {/* User Avatar */}
-              <EuiAvatar name="John Doe" size="m" />
-            </EuiHeaderLink>
-          </EuiHeaderLinks>
-        </EuiHeaderSection>
-      </EuiHeader>
+            <EuiHeaderSection>
+              <EuiHeaderLinks>
+                <EuiHeaderLink href="#">
+                  <EuiIcon type="email" size="m" />
+                </EuiHeaderLink>
+                <EuiHeaderLink href="#">
+                  <EuiIcon type="bell" size="m" />
+                </EuiHeaderLink>
+                <EuiHeaderLink href="#">
+                  <EuiAvatar name="John Doe" size="m" />
+                </EuiHeaderLink>
+              </EuiHeaderLinks>
+            </EuiHeaderSection>
+          </EuiHeader></>
+        ) : null}
     </div>
   );
 };

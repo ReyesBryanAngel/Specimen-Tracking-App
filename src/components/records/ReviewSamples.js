@@ -6,10 +6,7 @@ import {
     EuiText,
     EuiCheckbox,
     EuiButton,
-    EuiCallOut,
-    EuiIcon
 } from "@elastic/eui";
-import patients from '../../config/patients';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from "@tanstack/react-query";
 import ApiCall from '../../util/authentication/ApiCall';
@@ -18,10 +15,8 @@ import { useData } from '../../context/DataProvider';
 
 const ReviewSamples = () => {
     const navigate = useNavigate();
-    const { specimenData, dispatch } = useData();
+    const { dispatch } = useData();
     const { http } = ApiCall();
-    const [error, setError] = useState(null);
-    const [modal, setModal] = useState(false);
     const [specimenLoad, setSpecimenLoad] = useState(false);
     const [pendingSamples, setPendingSamples] = useState([]);
 
@@ -40,11 +35,6 @@ const ReviewSamples = () => {
     })
 
     const [isCheckedList, setIsCheckedList] = useState([]);
-
-    const clostModal  = () => {
-        setModal(false);
-    }
-
     const onCheckboxChange = (index) => {
       const newIsCheckedList = [...isCheckedList];
       newIsCheckedList[index] = !newIsCheckedList[index];
@@ -56,6 +46,7 @@ const ReviewSamples = () => {
             ...patient,
             checked: isCheckedList[index],
           }));
+
         http.post('/v1/specimens/update-checked', filteredData)
         .then((res) => {
             if (res?.data?.status === 200) {
@@ -64,8 +55,7 @@ const ReviewSamples = () => {
             }
         })
         .catch((e) => {
-            setModal(true);
-            setError(e.response?.data?.message);            
+            // 
         });
     }
 
@@ -79,29 +69,8 @@ const ReviewSamples = () => {
       }, [data, isLoading]);
 
     return (
-        <div className="main-content">
-             {modal && (
-                <div 
-                    style={{ 
-                        position: 'fixed',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -290%)',
-                        height: '90px',
-                        width: '250px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent:"center",
-                        textAlign:"center"
-                    }}
-                >
-                    <EuiCallOut color="danger" style={{ position:"relative" }}>
-                        <EuiIcon type="error" size="m" style={{ position:"absolute", top: 6, right: 7 }} onClick={clostModal} />
-                        {<p style={{ paddingBottom:"20px", color: "#BD271E" }}>{error}</p>}
-                    </EuiCallOut>
-                </div>
-            )}
-            <div className="home-container">
+        <div className="review-samples-content">
+            <div className="review-samples-container">
                 
                 {!isLoading && data ? (
                     <EuiFlexGroup style={{ gap: "20px", marginBottom: "20px" }}>
@@ -117,51 +86,61 @@ const ReviewSamples = () => {
                                 const mother = `${patient.baby_last_name}, ${patient.mothers_first_name}`;
                                 return (
                                     <EuiCard
-                                    style={{ width: '85%' }}
-                                    key={index}
-                                    textAlign="left"
-                                >
-                                    <div style={{ display: "flex", flexWrap: "nowrap",  alignItems: "center" }}>
-                                        <EuiCheckbox
-                                            id={`checkbox-${index}`}
-                                            checked={isCheckedList[index]}
-                                            onChange={() => onCheckboxChange(index)}
-                                            style={{ background: 'red', border: '2px solid green' }}
-                                        />
-                                        <div>
-                                            <h4>{mother}</h4>
+                                        key={index}
+                                        style={{ 
+                                            width: '85%',
+                                            height: '105px',
+                                            backgroundColor: "#fff",
+                                            border: '1px solid rgba(0, 0, 0, 0.1)',
+                                            boxShadow: '0px 4px 8px -6px rgba(0, 0, 0, 0.8)',
+                                        }}
+                                    >
+                                        <div style={{ display: "flex", flexWrap: "nowrap",  alignItems: "center", marginTop: "-17px" }}>
+                                            <EuiCheckbox
+                                                id={`checkbox-${index}`}
+                                                checked={isCheckedList[index]}
+                                                onChange={() => onCheckboxChange(index)}
+                                                style={{ background: 'red', border: '2px solid green' }}
+                                            />
+                                            <div>
+                                                <h4>{mother}</h4>
+                                            </div>
+                                            
                                         </div>
-                                        
-                                    </div>
-                                    <div className="flex-row">
-                                            <div className="flex-col">
-                                                <span style={{ fontSize: "14px"}}>Birthday</span>
+                                        <div className="flex-row">
+                                            <div className="flex-col" style={{display:"flex", whiteSpace: "nowrap" }}>
+                                                <span style={{ fontSize: "14px", alignSelf: "self-start" }}>Birthday</span>
                                                 <EuiText style={{ fontSize: "16px" }}>{formattedDate}</EuiText>
                                             </div>
                                             <div className="flex-col">
                                                 <span style={{ fontSize: "14px"}}>Sex</span>
                                                 <EuiText style={{ fontSize: "16px" }}>{patient.sex}</EuiText>
                                             </div>
-                                            <div className="flex-col">
+                                            <div className="flex-col" style={{display:"flex", whiteSpace: "nowrap" }}>
                                                 <span style={{ fontSize: "14px"}}>Specimen Status</span>
-                                                <EuiText style={{ fontSize: "16px" }}>{patient.specimen_status}</EuiText>
+                                                <EuiText style={{ fontSize: "16px", alignSelf: "self-start" }}>{patient.specimen_status}</EuiText>
                                             </div>
                                         </div>
-                                </EuiCard>
+                                    </EuiCard>
                                 )
                             })}
                          <div
-                                className="bottom-bar"
+                                className="review-samples-button"
                                 style={{ gap: "10px"  }}
                             >
                                 <EuiButton
+                                    disabled={!isCheckedList.includes(1) ? true : false}
                                     style={{
                                     borderRadius: "2.813px",
                                     width: "80%",
                                     color: "#FFFFFF",
-                                    backgroundColor: "#01B5AC",
+                                    backgroundColor: !isCheckedList.includes(1) ? "#e0e0e0" : "#01B5AC",
                                     border: "0px",
-                                    textDecoration: "none"
+                                    textDecoration: "none",
+                                    "&:disabled": {
+                                        backgroundColor: "#e0e0e0",
+                                        color: "#fff",
+                                      },
                                     }}
                                     
                                     onClick={logCourierInformation}
