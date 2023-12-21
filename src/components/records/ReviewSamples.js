@@ -15,7 +15,7 @@ import { useData } from '../../context/DataProvider';
 
 const ReviewSamples = () => {
     const navigate = useNavigate();
-    const { dispatch } = useData();
+    const { dispatch, newSpecimenData } = useData();
     const { http } = ApiCall();
     const [specimenLoad, setSpecimenLoad] = useState(false);
     const [pendingSamples, setPendingSamples] = useState([]);

@@ -21,7 +21,7 @@ const SpecimenReview = () => {
     const { dispatch } = useData();
     const navigate = useNavigate();
 
-    const { data: refreshSpecimen, isLoading: refreshSpecimenLoading } = useQuery({
+    const { data: refreshSpecimen } = useQuery({
         queryKey: ["sample"],
         enabled: !specimenLoad || !createSpecimen,
         retryDelay: 500,
@@ -51,13 +51,15 @@ const SpecimenReview = () => {
     }
 
     const updateSpecimen = async() => {
-        const updatedSpecimenData = {
-            ...specimenData,
+        const {samples, ...updatedSpecimentData} = specimenData;
+
+        const newSpecimenData = {
+            ...updatedSpecimentData,
             type_of_sample: 'Repeat Sample',
             specimen_status: refreshSpecimen?.samples?.specimen_status
           };
 
-        http.put(`v1/specimens/${refreshSpecimen?.samples?.id}`, updatedSpecimenData)
+        http.put(`v1/specimens/${refreshSpecimen?.samples?.id}`, newSpecimenData)
         .then((res) => {
 
             if (res?.data?.status === 200) {
@@ -66,6 +68,7 @@ const SpecimenReview = () => {
             }
      })
     }
+    
     const clostModal  = () => {
         setModal(false);
     }
@@ -103,7 +106,7 @@ const SpecimenReview = () => {
                                 fontSize: "20px",
                                 }}
                             >
-                                Specimen Form
+                                Specimen Form {!createSpecimen ? <>Repeat</> : null}
                             </h4>
                         </EuiFlexItem>
                     { createSpecimen && (
@@ -228,7 +231,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {createSpecimen ? specimenData?.date_and_time_of_collection : refreshSpecimen?.samples?.date_and_time_of_collection}
+                                {specimenData?.date_and_time_of_collection}
                             </EuiFlexItem>
                         </EuiFormRow>
                         { createSpecimen && (
@@ -261,7 +264,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {createSpecimen ? specimenData?.specimens : refreshSpecimen?.samples?.specimens}
+                                {specimenData?.date_and_time_of_collection}
                             </EuiFlexItem>
                         </EuiFormRow>
                         {createSpecimen && (
@@ -309,7 +312,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                            {createSpecimen ? specimenData?.place_of_birth : refreshSpecimen?.samples?.place_of_birth}
+                            {specimenData?.place_of_birth}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -324,7 +327,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                            {createSpecimen ? specimenData?.attending_practitioner : refreshSpecimen?.samples?.attending_practitioner}
+                            {specimenData?.attending_practitioner}
                             </EuiFlexItem>
                         </EuiFormRow>
                         { (specimenData.practitioner_profession !== "other" || refreshSpecimen?.samples?.practitioner_profession !== "other")  && (
@@ -340,7 +343,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {createSpecimen ? specimenData?.practitioner_profession : refreshSpecimen?.samples?.practitioner_profession}
+                                {specimenData?.practitioner_profession}
                             </EuiFlexItem>
                         </EuiFormRow>  
                         )}
@@ -357,7 +360,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                            {createSpecimen ? specimenData?.practitioners_day_contact_number : refreshSpecimen?.samples?.practitioners_day_contact_number}
+                            {specimenData?.practitioners_day_contact_number}
                             </EuiFlexItem>
                         </EuiFormRow>
                         <EuiFormRow
@@ -372,7 +375,7 @@ const SpecimenReview = () => {
                                     fontWeight: "normal"
                                 }}
                             >
-                            {createSpecimen ? specimenData?.practitioners_mobile_number : refreshSpecimen?.samples?.practitioners_mobile_number}
+                            {specimenData?.practitioners_mobile_number}
                             </EuiFlexItem>
                         </EuiFormRow>
                         {createSpecimen && (

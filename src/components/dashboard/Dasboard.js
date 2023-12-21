@@ -17,6 +17,9 @@ const Dashboard = () => {
   const [specimenLoad, setSpecimenLoad] = useState(false);
   const { http } = ApiCall();
   const [samples, setSamples] = useState([]);
+  const [results, setResults] = useState([]);
+  const [elavated, setElavated] = useState([]);
+  const [inadequate, setInadequate] = useState([]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["specimen"],
@@ -28,16 +31,22 @@ const Dashboard = () => {
           .get(`v1/specimens/all-samples`)
           .then((res) => {
               setSpecimenLoad(true);
-              const pendingSample = res?.data?.filter(s => s.specimen_status === "Pending");
-              setSamples(pendingSample);
               return res?.data;
         })
   })
 
   useEffect(() => {
-    const pendingSample = data?.filter(s => s.specimen_status === "Pending");
-    setSamples(pendingSample);
-  }, [data])
+    if (!isLoading) {
+      const pendingSample = data?.filter(s => s.specimen_status === "Pending");
+      const samplesWithResult = data?.filter(s => s.result !== null);
+      const elevatedResult = data?.filter(s => s.result === "Elavated");
+      const inadequate = data?.filter(s => s.result === "Inadequate");
+      setInadequate(inadequate);
+      setElavated(elevatedResult);
+      setResults(samplesWithResult);
+      setSamples(pendingSample);
+    }
+  }, [data, isLoading])
 
   return (
     <div className="main-content">
@@ -109,7 +118,7 @@ const Dashboard = () => {
                       <EuiFlexItem grow={false}>
                         <EuiText>
                           <h4 style={{ marginTop: "0" }}>
-                            <strong>23</strong>
+                            <strong>{results?.length}</strong>
                           </h4>
                         </EuiText>
                       </EuiFlexItem>
@@ -153,7 +162,7 @@ const Dashboard = () => {
                       <EuiFlexItem grow={false}>
                         <EuiText>
                           <h4 style={{ marginTop: "0" }}>
-                            <strong>5</strong>
+                            <strong>{elavated?.length}</strong>
                           </h4>
                         </EuiText>
                       </EuiFlexItem>
@@ -194,7 +203,7 @@ const Dashboard = () => {
                       <EuiFlexItem grow={false}>
                         <EuiText>
                           <h4 style={{ marginTop: "0" }}>
-                            <strong>5</strong>
+                            <strong>{inadequate?.length}</strong>
                           </h4>
                         </EuiText>
                       </EuiFlexItem>

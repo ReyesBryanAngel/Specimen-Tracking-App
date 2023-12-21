@@ -5,6 +5,7 @@ export const DataProvider = ({ children }) => {
   const [data, setData] = useState([]);
   const [createSpecimen, setCreateSpecimen] = useState(false);
   const [feedingValues, setFeedingValues] = useState([]);
+  const [newSpecimenData, setNewSpecimenData] = useState([]);
  
   const initialSpecimenState = {
     type_of_sample: '',
@@ -62,7 +63,9 @@ export const DataProvider = ({ children }) => {
         feedingValues,
         setFeedingValues,
         createSpecimen,
-        setCreateSpecimen
+        setCreateSpecimen,
+        newSpecimenData,
+        setNewSpecimenData
       }}
     >
       {children}

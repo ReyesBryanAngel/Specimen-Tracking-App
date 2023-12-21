@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     EuiFlexGroup,
     EuiFlexItem,
@@ -52,41 +52,6 @@ const Results = () => {
         setIsPopoverOpen(!isPopoverOpen);
     };
 
-    const sortByBirthday = () => {
-        const sortedResults = [...results].sort((a, b) => {
-            const dateA = new Date(a.birthday);
-            const dateB = new Date(b.birthday);
-            return dateA - dateB;
-        });
-        setresultSetter(sortedResults);
-        closePopover();
-    };
-
-    const showAllFunction = () => {
-        setresultSetter([...results])
-    }
-
-    const sortByNegative = () => {
-        const negativeResults = results.filter((results) => results.result === "negative");
-
-        setresultSetter(negativeResults);
-        closePopover();
-    };
-
-    const sortByPositive = () => {
-        const negativeResults = results.filter((results) => results.result === "positive");
-
-        setresultSetter(negativeResults);
-        closePopover();
-    };
-
-    const sortByInAdequate = () => {
-        const negativeResults = results.filter((results) => results.result === "inadequate");
-
-        setresultSetter(negativeResults);
-        closePopover();
-    };
-
     const { data, isLoading } = useQuery({
         queryKey: ["specimen"],
         enabled: !specimenLoad,
@@ -97,12 +62,68 @@ const Results = () => {
                 .get(`v1/specimens/all-samples`)
                 .then((res) => {
                     setSpecimenLoad(true);
+                    // console.log(res?.data)
                     const specimenWithResults = res?.data?.filter(r => r.result !== null);
                     setSpecimenData(specimenWithResults);
 
                     return res?.data;
                 })
       })
+      
+    const sortByBirthday = () => {
+        const sortedResults = [...data].sort((a, b) => {
+            const dateA = new Date(a.date_and_time_of_birth);
+            const dateB = new Date(b.date_and_time_of_birth);
+            return dateA - dateB;
+        });
+        setSpecimenData(sortedResults);
+        closePopover();
+    };
+
+    const showAllFunction = () => {
+        setSpecimenData([...data]);
+        closePopover();
+    }
+
+    const sortByNormal = () => {
+        const normalResults = data?.filter(r => r.result === "Normal");
+
+        if (normalResults?.length === 0) {
+            setSpecimenData([...data]);
+        } else {
+            setSpecimenData(normalResults);
+        }
+
+        closePopover();
+    };
+
+    const sortByElavated = () => {
+        const elavatedResult = data.filter((r) => r.result === "Elavated");
+
+        if(elavatedResult.length === 0) {
+            setSpecimenData([...data]);
+        } else {
+            setSpecimenData(elavatedResult);
+        }
+
+        closePopover();
+    };
+
+    useEffect(() => {
+        console.log(specimenData)
+    })
+
+    const sortByInAdequate = () => {
+        const inadequateResults = data?.filter(r => r.result === "Inadequate");
+
+        if (inadequateResults?.length === 0) {
+            setSpecimenData([...data]);
+        } else {
+            setSpecimenData(inadequateResults);
+        }
+
+        closePopover();
+    };
 
     const filterIndividualRecord = async (e, index) => {        
         const pending = specimenData.map((s) => ({
@@ -130,7 +151,7 @@ const Results = () => {
         <div className={"main-content"}>
         <div className="specimen-form-container">
             <div className="specimen-form-content-container">
-                {data?.length === 0 && (
+                {specimenData?.length === 0 && (
                     <div style={{ display: "flex", flexDirection: "column", alignItems:"center", textAlign:"center" }}>
                         <div>
                             <EuiImage
@@ -165,18 +186,18 @@ const Results = () => {
                                         <EuiButtonEmpty
                                             size="s"
                                             iconSide="right"
-                                            onClick={sortByNegative}
+                                            onClick={sortByNormal}
                                             style={{ textDecoration:"none", color:"black", fontSize:"13px", backgroundColor: "transparent"}}
                                         >
-                                            Negative
+                                            Normal
                                         </EuiButtonEmpty>
                                         <EuiButtonEmpty
                                             size="s"                                  
                                             iconSide="right"
-                                            onClick={sortByPositive}
+                                            onClick={sortByElavated}
                                             style={{ textDecoration:"none", color:"black", fontSize:"13px", backgroundColor: "transparent"}}
                                         >
-                                            Positive
+                                            Elavated
                                         </EuiButtonEmpty>
                                         <EuiButtonEmpty
                                             size="s"                                   
@@ -207,7 +228,6 @@ const Results = () => {
                                         <EuiListGroup
                                             listItems={items}
                                             maxWidth="none"
-                                            color="black"
                                             gutterSize="s"
                                             className="custom-eui-pagination"
                                         />
@@ -226,13 +246,13 @@ const Results = () => {
                                             onClick={(e) => filterIndividualRecord(e, index)}
                                             style={{ 
                                                 width: '100%',
-                                                paddingTop: "20px", 
-                                                height: "100%",
+                                                paddingBottom: "20px", 
+                                                height: '100%', 
                                                 backgroundColor: "#fff",
                                                 textDecoration:"none",
                                                 color: "black",
-                                                border: '1px solid transparent',
-                                                boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.4)',
+                                                border: '1px solid rgba(0, 0, 0, 0.1)',
+                                                boxShadow: '0px 4px 8px -6px rgba(0, 0, 0, 0.8)',
                                             }}
                                             key={index}
                                             textAlign="left"

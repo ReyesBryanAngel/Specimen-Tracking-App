@@ -85,7 +85,7 @@ const Patients = () => {
   const conditionalClassName = data?.length > 0 ? "main-content" : "login-content"
 
     return (
-        <div className={conditionalClassName}>
+        <div className={"main-content"}>
             <div className="specimen-form-container">
                 <div className="specimen-form-content-container">
                 {data?.length === 0 && (

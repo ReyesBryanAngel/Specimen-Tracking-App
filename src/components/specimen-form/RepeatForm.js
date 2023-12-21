@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {
     EuiButton,
     EuiFieldText,
@@ -13,18 +13,18 @@ import {
   import { useQuery } from "@tanstack/react-query";
   import { useData } from '../../context/DataProvider';
   import ApiCall from '../../util/authentication/ApiCall';
-  import  { SpecimenFormik } from "../../components/formikData";
+  import  { SpecimenFormik, specimenDataFetcher } from "../../components/formikData";
   import moment from 'moment';
 
 const RepeatForm = () => {
     const navigate = useNavigate();
-    const { specimenData, dispatch, createSpecimen } = useData();
+    const { specimenData, dispatch, createSpecimen, newSpecimenData, setNewSpecimenData, setCreateSpecimen } = useData();
    
     const [startDate, setStartDate] = useState(moment());
     const [specimenLoad, setSpecimenLoad] = useState(false);
     const { http } = ApiCall();
 
-    
+    const specimenForm = SpecimenFormik(specimenData, dispatch, navigate, createSpecimen);
     const { data: refreshSpecimen, isLoading: refreshSpecimenLoading } = useQuery({
         queryKey: ["sample"],
         enabled: !specimenLoad,
@@ -35,34 +35,48 @@ const RepeatForm = () => {
                 .get(`v1/specimens/refresh-specimen`)
                 .then((res) => {
                     setSpecimenLoad(true);
+                    specimenForm.setValues(specimenDataFetcher(res))
+                    // setNewSpecimenData(specimenDataFetcher(res))
+                    // console.log(res?.data?.samples)
+
                     return res?.data;
                 })
     })
 
-    const specimenForm = SpecimenFormik(specimenData, dispatch, navigate, createSpecimen, refreshSpecimen, refreshSpecimen);
+    
 
     const handleCheckboxOther = (column) => {
         const columnNames = ["doctor", "midwife", "nurse"].includes(column);
     
         if (columnNames) {
           specimenForm.setFieldValue("practitioner_profession_other", "");  
+          // setNewSpecimenData({practitioner_profession:  ""})
         }
     
         specimenForm.setFieldValue("practitioner_profession", column);
+        // setNewSpecimenData({practitioner_profession:  column})
       }
 
     const handleDateOfCollection = (date) => {
         setStartDate(date);
         const formatDateOfCollection = date.format("YYYY-MM-DD HH:mm:ss");
         specimenForm.setFieldValue("date_and_time_of_collection", formatDateOfCollection);
+        // setNewSpecimenData({date_and_time_of_collection: formatDateOfCollection})
     }
 
     const saveData = (values) => {
         if (!createSpecimen) {
+          // setNewSpecimenData(values);
             dispatch({ type: 'UPDATE', payload: values });
             navigate("/add-specimen/specimen-review");
         }
     }
+
+    React.useEffect(() => {
+      setCreateSpecimen(false);
+      dispatch({ type: 'UPDATE', payload: specimenForm?.values?.samples });
+
+    })
 
     return (
         <form>

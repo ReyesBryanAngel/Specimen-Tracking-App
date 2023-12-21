@@ -1,7 +1,44 @@
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 
-export const SpecimenFormik = (specimenData, dispatch, navigate, createSpecimen, refreshSpecimen) => {
+export const specimenDataFetcher = (res) => {
+  const resData = res?.data?.samples;
+
+  return {
+    samples: {
+      type_of_sample: resData?.type_of_sample ?? "",
+      baby_last_name: resData?.baby_last_name ?? "",
+      baby_first_name: resData?.baby_first_name ?? "",
+      mothers_first_name: resData?.mothers_first_name ?? "",
+      for_multiple_births: resData?.for_multiple_births ?? "",
+      place_of_birth: resData?.place_of_birth ?? "",
+      date_and_time_of_birth: resData?.date_and_time_of_birth ?? "",
+      date_and_time_of_collection: resData?.date_and_time_of_collection ?? "",
+      babys_weight_in_grams: resData?.babys_weight_in_grams ?? "",
+      age_of_gestation_in_weeks: resData?.age_of_gestation_in_weeks ?? "",
+      sex: resData?.sex ?? "",
+      specimens: resData?.specimens ?? "",
+      specimen_status: resData?.specimen_status ?? "",
+      place_of_collection: resData?.place_of_collection ?? "",
+      attending_practitioner: resData?.attending_practitioner ?? "",
+      practitioners_day_contact_number: resData?.practitioners_day_contact_number ?? "",
+      practitioners_mobile_number: resData?.practitioners_mobile_number ?? "",
+      practitioner_profession: resData?.practitioner_profession ?? "",
+      practitioner_profession_other: resData?.practitioner_profession_other ?? "",
+      baby_status: resData?.baby_status ?? "",
+      baby_status_cont: resData?.baby_status_cont ?? "",
+      name_of_parent: resData?.name_of_parent ?? "",
+      number_and_street: resData?.number_and_street ?? "",
+      barangay_or_city: resData?.barangay_or_city ?? "",
+      province: resData?.province ?? "",
+      zip_code: resData?.zip_code ?? "",
+      contact_number_of_parent: resData?.contact_number_of_parent ?? "",
+      additional_contact_number: resData?.additional_contact_number ?? ""
+    }
+  }
+}
+
+export const SpecimenFormik = (specimenData, dispatch, navigate, createSpecimen) => {
     const initialValues = {
       type_of_sample: specimenData.type_of_sample,
       baby_last_name: specimenData.baby_last_name,

@@ -116,9 +116,9 @@ const Courier = () => {
     }
 
     const returnJsx  = !allSampleLoading && allSamples && !courierLoading && couriers
-    const conditionalClassName = allSamples?.length > 0 ? "main-content" : "login-content"
+    const conditionalClassName = allSamples?.length > 0 ? "home-container" : "specimen-form-container"
     return (
-        <div className={conditionalClassName}>
+        <div className={"main-content"}>
             {couriers?.length === 0 && (
                 <div style={{ display: "flex", flexDirection: "column", alignItems:"center", textAlign:"center" }}>
                     <div>
@@ -134,7 +134,7 @@ const Courier = () => {
                 </div>
             )}
             {returnJsx ? (
-                <div className="home-container">
+                <div className={conditionalClassName}>
                     <EuiFlexGroup style={{ gap: "20px", marginBottom: "20px" }}>
                         {couriers?.length !== 0 && (
                              <div style={{ display: "flex", justifyContent: "space-between", marginLeft: "20px", marginTop: "20px"}}>
