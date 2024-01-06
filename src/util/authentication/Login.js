@@ -10,7 +10,9 @@ import {
   EuiProvider,
   EuiListGroup,
   EuiListGroupItem,
+  EuiImage
 } from "@elastic/eui";
+import nsrcLogo from '../../util/images/nsrc_logo.png';
 
 const Login = () => {
   const { http, setToken } = ApiCall();
@@ -37,8 +39,11 @@ const Login = () => {
     <EuiProvider>
         <div className='login-content' style={{ boxShadow: "4px 4px 20px 0px rgba(0, 0, 0, 0.25)", height: "72vh"}}>
 
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "40px" }}>
-                <EuiText size='m' style={{ marginTop: "40px", fontSize:"30px", fontWeight:"500" }}>NSF</EuiText>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "30px" }}>
+                <EuiImage
+                  style={{ height: "100px", marginTop: "30px"}}
+                  src={nsrcLogo}
+                />
                 <EuiText size='m' style={{ fontSize:"18px" }}>Facility Login</EuiText>
                 {error && (
                   <EuiCallOut

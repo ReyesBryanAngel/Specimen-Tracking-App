@@ -164,7 +164,6 @@ body {
   }
 }
 
-/* Header.css */
 .sidebar {
   position: fixed;
   top: 0;
@@ -217,12 +216,8 @@ body {
   margin-bottom: 16px;
 }
 
-/* .dashboard-title-container {
-  margin: 21px 0px 19px 18px;
-} */
-
 .euiCard__title {
-  margin: 10px 0; /* Adjust the top and bottom margins as needed */
+  margin: 10px 0;
 }
 
 .euiCard__description {
@@ -320,16 +315,16 @@ body {
   height: 32px;
 }
 
-/* .custom-eui-pagination {
-  display: flex;
-  white-space: "nowrap";
-} */
+.custom-popover-width {
+  width: 300px;
+}
 
-/* .custom-eui-pagination .pagination {
-  display: flex;
-  white-space: "nowrap";
-} */
 .custom-eui-pagination button {
+  border: none;
+  background-color: transparent;
+}
+
+.notificationButton {
   border: none;
   background-color: transparent;
 }
@@ -354,12 +349,8 @@ body {
   padding: 0 !important;
 }
 
-
-
-
 .sorter-button {
   text-decoration: none;
   color: black;
   font-size: 12;
 }
-

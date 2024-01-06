@@ -36,9 +36,6 @@ const RepeatForm = () => {
                 .then((res) => {
                     setSpecimenLoad(true);
                     specimenForm.setValues(specimenDataFetcher(res))
-                    // setNewSpecimenData(specimenDataFetcher(res))
-                    // console.log(res?.data?.samples)
-
                     return res?.data;
                 })
     })
@@ -50,23 +47,19 @@ const RepeatForm = () => {
     
         if (columnNames) {
           specimenForm.setFieldValue("practitioner_profession_other", "");  
-          // setNewSpecimenData({practitioner_profession:  ""})
         }
     
         specimenForm.setFieldValue("practitioner_profession", column);
-        // setNewSpecimenData({practitioner_profession:  column})
       }
 
     const handleDateOfCollection = (date) => {
         setStartDate(date);
         const formatDateOfCollection = date.format("YYYY-MM-DD HH:mm:ss");
         specimenForm.setFieldValue("date_and_time_of_collection", formatDateOfCollection);
-        // setNewSpecimenData({date_and_time_of_collection: formatDateOfCollection})
     }
 
     const saveData = (values) => {
         if (!createSpecimen) {
-          // setNewSpecimenData(values);
             dispatch({ type: 'UPDATE', payload: values });
             navigate("/add-specimen/specimen-review");
         }

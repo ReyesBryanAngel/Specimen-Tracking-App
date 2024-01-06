@@ -11,6 +11,7 @@ import ApiCall from "../../util/authentication/ApiCall";
 import { useQuery } from "@tanstack/react-query";
 import { AddSpecimenButton } from "../../components/add-specimen/AddSpecimenButton";
 import { useNavigate } from "react-router-dom";
+import { useData } from '../../context/DataProvider';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ const Dashboard = () => {
   const [results, setResults] = useState([]);
   const [elavated, setElavated] = useState([]);
   const [inadequate, setInadequate] = useState([]);
+  const { setSpecimenFiltered, setGoToClicked } = useData();
+  
 
   const { data, isLoading } = useQuery({
     queryKey: ["specimen"],
@@ -31,6 +34,7 @@ const Dashboard = () => {
           .get(`v1/specimens/all-samples`)
           .then((res) => {
               setSpecimenLoad(true);
+              
               return res?.data;
         })
   })
@@ -39,14 +43,28 @@ const Dashboard = () => {
     if (!isLoading) {
       const pendingSample = data?.filter(s => s.specimen_status === "Pending");
       const samplesWithResult = data?.filter(s => s.result !== null);
-      const elevatedResult = data?.filter(s => s.result === "Elavated");
-      const inadequate = data?.filter(s => s.result === "Inadequate");
-      setInadequate(inadequate);
+      const elevatedResult = data?.filter(s => s.result === "Elevated");
+      const inadequateResult = data?.filter(s => s.result === "Inadequate");
+      setInadequate(inadequateResult);
       setElavated(elevatedResult);
       setResults(samplesWithResult);
       setSamples(pendingSample);
     }
   }, [data, isLoading])
+
+  const sortByInAdequate = () => {
+    setSpecimenFiltered(inadequate);
+    setGoToClicked(true);
+
+    navigate("/results");
+  };
+
+  const sortByElevated = () => {
+    setSpecimenFiltered(elavated);
+    setGoToClicked(true);
+
+    navigate("/results");
+  };
 
   return (
     <div className="main-content">
@@ -133,6 +151,7 @@ const Dashboard = () => {
                         <EuiButton
                            onClick={() => {
                             navigate("/results")
+                            setGoToClicked(false)
                           }}
                           size="m"
                           style={{
@@ -175,6 +194,7 @@ const Dashboard = () => {
                       </EuiFlexItem>
                       <EuiFlexItem grow={false}>
                         <EuiButton
+                          onClick={sortByElevated}
                           size="m"
                           style={{
                             borderRadius: "2.813px",
@@ -216,6 +236,7 @@ const Dashboard = () => {
                       </EuiFlexItem>
                       <EuiFlexItem grow={false}>
                         <EuiButton
+                          onClick={sortByInAdequate}
                           size="m"
                           style={{
                             borderRadius: "2.813px",

@@ -10,22 +10,21 @@ import {
     EuiImage
 } from "@elastic/eui";
 import { useNavigate } from 'react-router-dom';
-import { useData } from '../../context/DataProvider';
-import results from '../../config/results'
 import emptyResult from '../../util/images/no_result.png';
 import { useQuery } from "@tanstack/react-query";
 import { AddSpecimenButton } from "../../components/add-specimen/AddSpecimenButton";
 import ApiCall from '../../util/authentication/ApiCall';
-
-
+import { useData } from '../../context/DataProvider';
 
 const Results = () => {
     const navigate = useNavigate();
     const [specimenLoad, setSpecimenLoad] = useState(false);
-    const [resultSetter, setresultSetter] = useState([...results]);
-    const [specimenData, setSpecimenData] = useState([]);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    const [normalResult, setNormalResult] = useState([]);
+    const [elevatedResult ,setElevatedResult] = useState([]);
+    const [inadequateResult,setInadequateResult] = useState([]);
     const { http } = ApiCall();
+    const { specimenFiltered, setSpecimenFiltered, goToClicked } = useData();
 
     const items = [
         {
@@ -62,9 +61,16 @@ const Results = () => {
                 .get(`v1/specimens/all-samples`)
                 .then((res) => {
                     setSpecimenLoad(true);
-                    // console.log(res?.data)
                     const specimenWithResults = res?.data?.filter(r => r.result !== null);
-                    setSpecimenData(specimenWithResults);
+                    const filterNormal = res?.data?.filter(n => n.result === "Normal");
+                    const filterElevated = res?.data?.filter(n => n.result === "Elevated");
+                    const filterInadequate = res?.data?.filter(n => n.result === "Inadequate");
+                    setNormalResult(filterNormal);
+                    setElevatedResult(filterElevated);
+                    setInadequateResult(filterInadequate);
+                    if (!goToClicked) {
+                        setSpecimenFiltered(specimenWithResults);
+                    }
 
                     return res?.data;
                 })
@@ -76,57 +82,39 @@ const Results = () => {
             const dateB = new Date(b.date_and_time_of_birth);
             return dateA - dateB;
         });
-        setSpecimenData(sortedResults);
+        setSpecimenFiltered(sortedResults);
         closePopover();
     };
 
     const showAllFunction = () => {
-        setSpecimenData([...data]);
+        const specimenWithResults = data?.filter(r => r.result !== null);
+        setSpecimenFiltered([...specimenWithResults]);
         closePopover();
     }
 
     const sortByNormal = () => {
         const normalResults = data?.filter(r => r.result === "Normal");
-
-        if (normalResults?.length === 0) {
-            setSpecimenData([...data]);
-        } else {
-            setSpecimenData(normalResults);
-        }
+        setSpecimenFiltered(normalResults);
 
         closePopover();
     };
 
     const sortByElavated = () => {
-        const elavatedResult = data.filter((r) => r.result === "Elavated");
-
-        if(elavatedResult.length === 0) {
-            setSpecimenData([...data]);
-        } else {
-            setSpecimenData(elavatedResult);
-        }
+        const elavatedResult = data.filter((r) => r.result === "Elevated");
+        setSpecimenFiltered(elavatedResult);
 
         closePopover();
     };
 
-    useEffect(() => {
-        console.log(specimenData)
-    })
-
     const sortByInAdequate = () => {
         const inadequateResults = data?.filter(r => r.result === "Inadequate");
-
-        if (inadequateResults?.length === 0) {
-            setSpecimenData([...data]);
-        } else {
-            setSpecimenData(inadequateResults);
-        }
+        setSpecimenFiltered(inadequateResults);
 
         closePopover();
     };
 
     const filterIndividualRecord = async (e, index) => {        
-        const pending = specimenData.map((s) => ({
+        const pending = specimenFiltered.map((s) => ({
             id: s?.id,
             result: s?.result,
             specimen_status: s?.specimen_status,
@@ -145,13 +133,15 @@ const Results = () => {
         }
     }
 
-    const conditionalClassName = specimenData?.length > 0 ? "main-content" : "login-content"
+    useEffect(() => {
+        console.log(goToClicked);
+    })
 
     return (
         <div className={"main-content"}>
         <div className="specimen-form-container">
             <div className="specimen-form-content-container">
-                {specimenData?.length === 0 && (
+                {specimenFiltered?.length === 0 && (
                     <div style={{ display: "flex", flexDirection: "column", alignItems:"center", textAlign:"center" }}>
                         <div>
                             <EuiImage
@@ -166,7 +156,7 @@ const Results = () => {
                     </div>
                 )}
 
-                {!isLoading && specimenData?.length !== 0 ? (
+                {!isLoading && specimenFiltered?.length !== 0 ? (
                     <>
                         <EuiFlexGroup style={{ gap: "20px", marginBottom: "20px" }}>
                             <div className="flex-col" style={{ width: "100%" }}>
@@ -192,6 +182,7 @@ const Results = () => {
                                             Normal
                                         </EuiButtonEmpty>
                                         <EuiButtonEmpty
+                                            disabled={!elevatedResult?.length > 0}
                                             size="s"                                  
                                             iconSide="right"
                                             onClick={sortByElavated}
@@ -200,6 +191,7 @@ const Results = () => {
                                             Elavated
                                         </EuiButtonEmpty>
                                         <EuiButtonEmpty
+                                            disabled={!inadequateResult?.length > 0}
                                             size="s"                                   
                                             iconSide="right"
                                             onClick={sortByInAdequate}
@@ -236,7 +228,7 @@ const Results = () => {
                                 </div>
                             </div>
                             <EuiFlexItem style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "15px" }}>
-                                {specimenData.map((patient, index) => {
+                                {specimenFiltered.map((patient, index) => {
                                     const { format } = require('date-fns');
                                     const dateOfBirth = new Date(patient.date_and_time_of_birth);
                                     const formattedDate = format(dateOfBirth, "MMMM dd, yyyy");
@@ -284,7 +276,7 @@ const Results = () => {
                             </EuiFlexItem>
                         </EuiFlexGroup>
                     </>
-                ): specimenData?.length !== 0 && <div>Loading...</div>}
+                ): specimenFiltered?.length !== 0 && <div>Loading...</div>}
                 
             </div>
         </div>
